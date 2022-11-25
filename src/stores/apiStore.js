@@ -13,7 +13,7 @@ export const useApiStore = defineStore("api", () => {
   const auth = useAuthStore();
 
   //STATE
-  const offlineApiTesting = true;
+  const offlineApiTesting = false;
 
   //FUNCTIONS ACTIONS
   // LISTAR (Actualizar Arreglos en el cliente con datos del servidor)

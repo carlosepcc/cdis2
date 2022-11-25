@@ -6,19 +6,16 @@ import { api } from "boot/axios";
 import { notifyError } from "src/composables/useAPI.js";
 import { useRouter } from "vue-router";
 import { urls } from "src/composables/useAPI.js";
-
 export const useAuthStore = defineStore("auth", () => {
   //COMPOSITING STORES
   const router = useRouter();
-
   //STATE
-  const offlineTesting = ref(true);
+  const offlineTesting = ref(false);
   const loggedUser = ref(null);
   const mockUser = ref({
-    nombre: "Mock",
+    name: "Mock",
     username: "mock",
-    rol: "mock user",
-    permisos: ["ROLE_C_DENUNCIA"],
+    role: "Mock",
   });
   const loggedUserUi = computed(() => {
     return {

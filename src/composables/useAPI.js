@@ -9,7 +9,7 @@ export const urls = {
   declaracion: "declarcion",
   resolucion: "resolucion",
   expediente: "expediente",
-  login: "usuario/login",
+  login: "login",
   denuncia: "denuncia",
   user: "usuario",
   caso: "caso",

@@ -5,12 +5,12 @@ q-card.q-pa-md.shadow-1.hide-scrollbar.rounded-borders(style='max-width: 400px')
   q-card-section
     q-form.q-gutter-md(@submit='onSubmit' @reset='onReset' ref='formulario')
       q-input(autofocus tabindex='1' clearable filled :dense='state.dense'
-      v-model='loginObject.usuario'
+      v-model='loginObject.username'
       label='Usuario'
       lazy-rules :rules=`[
         (val) => (val && val.length > 0) || 'Este campo no puede estar vacío',
 ]`)
-      q-input(tabindex='2' filled :dense='state.dense' :type='showPassword ? "text" : "password"' v-model='loginObject.contrasena' label='Contraseña' lazy-rules :rules=`[
+      q-input(tabindex='2' filled :dense='state.dense' :type='showPassword ? "text" : "password"' v-model='loginObject.password' label='Contraseña' lazy-rules :rules=`[
         (val) => (val !== null && val !== '') || 'Este campo no puede estar vacío',
 ]`)
           template(v-slot:append)
@@ -28,20 +28,19 @@ import { useAuthStore } from "src/stores/authStore.js";
 const auth = useAuthStore();
 const formulario = ref();
 const showPassword = ref(false);
-
-const loginObject = ref({ usuario: "", contrasena: "" });
+const loginObject = ref({ username: "", password: "" });
 
 //SUBMIT
 const onSubmit = () => {
   auth.login(loginObject.value);
   //onReset();
-  //! TODO: No resetear cuando da error
+  //! TODO: No reestablecer cuando da error
 };
 
 //RESET FORM
 const onReset = () => {
   //Reset to base values
-  loginObject.value = { usuario: "", contrasena: "" };
+  loginObject.value = { username: "", password: "" };
   //Clear validation error messages.
   formulario.value.resetValidation();
 };
