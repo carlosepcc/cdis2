@@ -1,6 +1,6 @@
 const roles = {
   dec: "DECANO",
-  adm: "ADMINISTRATOR",
+  adm: "ADMIN",
   pre: "PRESIDENT",
   sec: "SECRETARY",
   voc: "VOCAL",

@@ -5,15 +5,13 @@ import { api } from "boot/axios";
 import route from "src/router";
 const Router = route();
 export const urls = {
-  permiso: "rol/mostrarPermisos",
-  declaracion: "declarcion",
-  resolucion: "resolucion",
-  expediente: "expediente",
+  denunciation: "denunciation",
+  declaration: "declaration",
+  conclusion: "conclusion",
+  resolution: "resolution",
   login: "login",
-  denuncia: "denuncia",
-  user: "usuario",
-  caso: "caso",
-  rol: "rol",
+  case: "case",
+  user: "user",
 };
 export const goToIndexJs = () => {
   Router.replace("/");

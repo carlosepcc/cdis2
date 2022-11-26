@@ -3,13 +3,13 @@
     <BaseForm
       v-model="showForm"
       v-show="showForm"
-      formTitle="Resolucion"
+      formTitle="resolution"
       @submit="submitFormData"
       @reset="resetFormData"
       @close-form="closeForm"
       :isModifying="update"
     >
-      <template v-slot:header v-if="update">VER RESOLUCION</template>
+      <template v-slot:header v-if="update">VER resolution</template>
       <template v-slot:footer v-if="update">
         <q-btn
           flat
@@ -22,10 +22,10 @@
       /></template>
       <template v-slot:default>
         <q-input
-          v-model="resolucionObject.ano"
+          v-model="resolutionObject.number"
           :borderless="update"
           :dense="state.dense"
-          label="Curso"
+          label="Número"
           :readonly="update"
           max-length="4"
           class="q-mb-md"
@@ -33,7 +33,7 @@
 
         <!--        COMISIONES-->
         <q-card
-          v-for="(c, i) in resolucionObject.comisiones"
+          v-for="(c, i) in resolutionObject.comisiones"
           :key="i"
           flat
           bordered
@@ -52,7 +52,7 @@
                   title="Descartar comisión"
                   flat
                   icon="r_close"
-                  @click="resolucionObject.comisiones.splice(i, 1)"
+                  @click="resolutionObject.comisiones.splice(i, 1)"
                 />
               </div>
             </div>
@@ -61,29 +61,29 @@
           <q-card-section>
             <q-select
               :readonly="update"
-              v-model="c.presidente"
+              v-model="c.president"
               :dense="state.dense"
               :options="usersArr"
               :rules="[val || 'Por favor, seleccione un presidente']"
               label="Presidente"
               lazy-rules
               map-options
-              option-label="nombre"
+              option-label="name"
               emit-value
-              option-value="usuario"
+              option-value="id"
             />
             <q-select
               :readonly="update"
-              v-model="c.secretario"
+              v-model="c.secretary"
               :dense="state.dense"
               :options="usersArr"
               :rules="[val || 'Por favor, seleccione un secretario']"
               label="Secretario"
               lazy-rules
               map-options
-              option-label="nombre"
+              option-label="name"
               emit-value
-              option-value="usuario"
+              option-value="id"
             />
           </q-card-section>
         </q-card>
@@ -97,9 +97,9 @@
           spread
           no-caps
           class="full-width"
-          :label="`Comisión ${resolucionObject.comisiones.length + 1}`"
+          :label="`Comisión ${resolutionObject.comisiones.length + 1}`"
           @click="
-            resolucionObject.comisiones.push({
+            resolutionObject.comisiones.push({
               presidente: '',
               secretario: '',
               idRolP: 4,
@@ -108,14 +108,14 @@
           "
         />
         <DevInfo>
-          {{ resolucionObject }}
+          {{ resolutionObject }}
         </DevInfo>
       </template>
     </BaseForm>
     <ListPage
-      :columns="resolucionFields"
+      :columns="resolutionFields"
       :rows="s.array"
-      heading="Resoluciones"
+      heading="Resolución"
       rowKey="id"
       @updateList="s.refresh"
       @open-form="(payload) => openForm(payload)"
@@ -123,10 +123,10 @@
       :canUpdate="false"
     ></ListPage>
     <DevInfo>
-      resolucionObject: {{ resolucionObject }}<br />
-      resolucionesArr: {{ resolucionesArr }}
+      resolutionObject: {{ resolutionObject }}<br />
+      resolutionesArr: {{ resolutionesArr }}
     </DevInfo>
-    <!--    No hay endpoint en el backend para modificar la resolucion-->
+    <!--    No hay endpoint en el backend para modificar la resolution-->
   </q-page>
 </template>
 <script setup>
@@ -138,19 +138,19 @@ import listar, { eliminar, guardar } from "src/composables/useAPI.js";
 import state, {
   usersArr,
   permisosArr,
-  resolucionesArr,
+  resolutionesArr,
   pathToCurso,
 } from "src/composables/useState.js";
-import { useResolucionStore } from "src/stores/resolucionStore";
-const s = useResolucionStore();
+import { useResolutionStore } from "src/stores/resolutionStore";
+const s = useresolutionStore();
 s.refresh();
 
 // MODIFICAR (Abrir formulario con datos del objeto a modificar)
-const resolucionObject = ref({});
-const resolucionRowObject = ref({});
-const resolucionExportObject = ref({});
+const resolutionObject = ref({});
+const resolutionRowObject = ref({});
+const resolutionExportObject = ref({});
 
-const update = computed(() => resolucionObject.value.id !== undefined);
+const update = computed(() => resolutionObject.value.id !== undefined);
 //openForm triggered on: Nueva entrada, Modificar
 const currentYear = new Date().getFullYear();
 const curso = `${currentYear}-${currentYear + 1}`;
@@ -165,47 +165,47 @@ const openForm = (
     ],
   }
 ) => {
-  resolucionRowObject.value = obj;
-  resolucionObject.value = obj;
-  let resolucionDto = {};
+  resolutionRowObject.value = obj;
+  resolutionObject.value = obj;
+  let resolutionDto = {};
   if (obj.id !== undefined) {
-    resolucionDto.id = obj.id;
-    resolucionDto.ano = pathToCurso(obj.url);
-    resolucionDto.comisiones = obj.comisionList.map((c) => {
+    resolutionDto.id = obj.id;
+    resolutionDto.ano = pathToCurso(obj.url);
+    resolutionDto.comisiones = obj.comisionList.map((c) => {
       return {
         presidente: c.comisionUsuarioList[0]?.usuario?.usuario,
         secretario: c.comisionUsuarioList[1]?.usuario?.usuario,
       };
     });
-    resolucionObject.value = resolucionDto;
+    resolutionObject.value = resolutionDto;
   }
   showForm.value = true;
 };
 
 //SUBMIT
 function submitFormData() {
-  s.save(resolucionObject.value, resolucionesArr, url);
+  s.save(resolutionObject.value);
   resetFormData();
   closeForm();
 }
 //RESET
 function resetFormData() {
-  resolucionObject.value = { ano: curso, comisiones: [{}] };
+  resolutionObject.value = { ano: curso, comisiones: [{}] };
 }
 
 // delete tuples by array of objects
 const deleteTuples = (selectedRows = []) =>
-  s.del(selectedRows, resolucionesArr, url);
-const resolucionFields = ref([
+  s.del(selectedRows, resolutionesArr, url);
+const resolutionFields = ref([
   {
-    name: "curso",
-    label: "Curso",
-    field: "curso",
+    name: "number",
+    label: "Número",
+    field: "number",
     align: "center",
     sortable: true,
   },
   {
-    name: "comisiones",
+    name: "commissions",
     required: true,
     label: "Comisiones",
     align: "left",
