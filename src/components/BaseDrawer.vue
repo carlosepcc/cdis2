@@ -3,6 +3,7 @@ import DrawerItem from "components/DrawerItem.vue";
 import { ref } from "vue";
 import { useAuthStore } from "src/stores/authStore";
 import state, { userHasPermission } from "src/composables/useState.js";
+import r from "src/composables/useRoles";
 const auth = useAuthStore();
 // DRAWER
 const miniState = ref(true);
@@ -14,52 +15,45 @@ const drawerItems = [
     title: "Denuncias",
     icon: "r_announcement",
     to: "denuncias",
-    forRole: "ROLE_R_DENUNCIA",
+    for: [r.user],
   },
   {
     title: "Comisiones Disciplinarias",
     icon: "r_admin_panel_settings",
     to: "comisiones",
-    forRole: "ROLE_R_COMISION",
+    for: [r.dec],
   },
   {
     title: "Usuarios",
     icon: "r_manage_accounts",
     to: "users",
-    forRole: "ROLE_R_USUARIO",
-  },
-  {
-    title: "Roles",
-    icon: "r_badge",
-    to: "roles",
-    forRole: "ROLE_R_ROL",
+    for: [r.adm],
   },
   {
     title: "Declaraciones",
     icon: "r_chat",
     to: "declaraciones",
-    forRole: "ROLE_R_DECLARACION",
+    for: [r.user, r.pres, r.sec],
   },
   {
     title: "Casos",
     icon: "r_assignment_ind",
     to: "casos",
-    forRole: "ROLE_R_CASO",
+    for: [r.dec, r.pre, r.sec, r.voc],
   },
   {
     title: "Conclusiones",
     icon: "r_copy",
     to: "conclusions",
-    forRole: "ROLE_R_CONCLUSONS",
+    for: [r.pre, r.sec, r.dec],
   },
   {
     title: "Resoluciones",
     icon: "r_article",
     to: "resoluciones",
-    forRole: "ROLE_R_RESOLUCION",
+    for: [r.dec],
   },
 
-  // ALL USERS index 6 - 8 //, forRoles: ['Administrador', 'Asesor_de_calidad', 'Coordinador_de_calidad', 'Encargado_de_proyecto', 'Revisor']
   { title: "Ajustes", icon: "settings", to: "settings", separate: true },
   { title: "Ayuda", icon: "help", to: "help" },
   { title: "Acerca de CDIS", icon: "info", to: "about" },
@@ -87,34 +81,32 @@ const drawerItems = [
             leave-active-class="animated fadeOut"
           >
             <!--v-if="
-                drawerItem.forRole == undefined ||
+                drawerItem.for == undefined ||
                 (state.loggedUser
                   ? state.loggedUser.permisos.some((iPermisoObject) =>
-                      drawerItem.forRole.includes(iPermisoObject.permiso)
+                      drawerItem.for.includes(iPermisoObject.permiso)
                     )
-                  : false) /*si el item del drawer no tiene forRole, o el arreglo de permisos del usuario autenticado tiene algún permiso en común con el arreglo forRoles del item, se muestra, de lo contrario no.*/
+                  : false) /*si el item del drawer no tiene for, o el arreglo de permisos del usuario autenticado tiene algún permiso en común con el arreglo fors del item, se muestra, de lo contrario no.*/
               "
 
               v-if="
-                drawerItem.forRole == undefined ||
+                drawerItem.for == undefined ||
                 (state.loggedUser
                   ? state.loggedUser.permisos.some((iPermisoObject) =>
-                      drawerItem.forRole === iPermisoObject.permiso
+                      drawerItem.for === iPermisoObject.permiso
                     )
-                  : false) //TODO /*si el item del drawer no tiene forRole, o el arreglo de permisos del usuario autenticado tiene algún permiso en común con el arreglo forRoles del item, se muestra, de lo contrario no.*/
+                  : false) //TODO /*si el item del drawer no tiene for, o el arreglo de permisos del usuario autenticado tiene algún permiso en común con el arreglo fors del item, se muestra, de lo contrario no.*/
               "-->
             <DrawerItem
               v-bind="drawerItem"
               v-if="
-                drawerItem.forRole === undefined ||
+                drawerItem.for === undefined ||
                 auth.offlineTesting ||
-                auth.loggedUser?.permisos[0] === 'ROLE_ADMIN' ||
-                auth.loggedUser?.permisos.some(
-                  (permiso) => drawerItem.forRole === permiso
-                )
+                auth.loggedUser?.roles[1] === r.adm ||
+                auth.loggedUser?.roles.some((rol) => drawerItem.for === rol)
               "
             />
-            <!-- TODO si el item del drawer no tiene forRole, o el arreglo de permisos del usuario autenticado tiene algún permiso en común con el arreglo forRoles del item, se muestra, de lo contrario no. -->
+            <!-- TODO si el item del drawer no tiene for, o el arreglo de permisos del usuario autenticado tiene algún permiso en común con el arreglo fors del item, se muestra, de lo contrario no. -->
           </transition-group>
         </template>
       </q-list>

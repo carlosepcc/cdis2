@@ -19,12 +19,12 @@ export const useAuthStore = defineStore("auth", () => {
   });
   const loggedUserUi = computed(() => {
     return {
-      username: loggedUser.value?.usuario,
-      name: loggedUser.value?.nombre,
-      thumbnail: loggedUser.value?.nombre[0].toUpperCase(), //thumbnails supports html
-      role: loggedUser.value?.rol.replace("ROLE_", ""),
-      rolethumbnail: loggedUser.value?.rol[5], //thumbnails supports html
-      permits: loggedUser.value?.permisos,
+      username: loggedUser.value?.username,
+      name: loggedUser.value?.name,
+      thumbnail: loggedUser.value?.name[0].toUpperCase(), //thumbnails supports html
+      role: loggedUser.value?.roles[1],
+      roles: loggedUser.value?.roles,
+      rolethumbnail: loggedUser.value?.roles[0], //thumbnails supports html
     };
   });
 
@@ -72,7 +72,7 @@ export const useAuthStore = defineStore("auth", () => {
     if (isStoredTokenGood) {
       console.info("There is a good token stored.");
       loggedUser.value = JSON.parse(localStorage.getItem("loggedUser"));
-      api.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
+      api.defaults.headers.common["Authorization"] = storedToken;
       console.log("The Authorization header was set.");
       console.table(
         `The ${loggedUserUi.value.role} ${loggedUserUi.value.name} is logged in. More info below.`,
@@ -122,7 +122,7 @@ export const useAuthStore = defineStore("auth", () => {
   function login(loginObject) {
     let noti = Notify.create({
       type: "ongoing",
-      message: `Iniciando sesión para ${loginObject.usuario}`,
+      message: `Iniciando sesión para ${loginObject.username}`,
       spinner: QSpinnerGears,
       actions: [{ label: "Ocultar", color: "white" }],
     });
@@ -137,7 +137,7 @@ export const useAuthStore = defineStore("auth", () => {
         console.log("Login response received: ", response);
         let token = "";
         try {
-          token = response.data.token;
+          token = response.data;
           console.info("Token received.");
         } catch (err) {
           console.error(err);
