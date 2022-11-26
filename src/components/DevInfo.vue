@@ -1,7 +1,7 @@
 <template>
   <q-card bordered flat class="q-my-sm opaque">
     <q-card-section class="q-py-xs q-px-sm">
-      <details v-if="auth.loggedUser?.rol == 'ROLE_ADMIN'">
+      <details v-if="auth.loggedUser?.roles[1] == r.adm">
         <summary class="cursor-pointer">
           Información para desarrolladores:
         </summary>
@@ -18,6 +18,7 @@
 <script setup>
 import state from "src/composables/useState.js";
 import { useAuthStore } from "src/stores/authStore";
+import r from "src/composables/useRoles";
 const auth = useAuthStore();
 </script>
 <style lang="sass">

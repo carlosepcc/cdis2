@@ -77,7 +77,7 @@ import listar, { eliminar, guardar } from "src/composables/useAPI.js";
 import state, {
   casosArr,
   denunciasArr,
-  comisionesArr,
+  commissionsArr,
 } from "src/composables/useState.js";
 
 function incisoToDescription(article = 3, inciso = "a") {
@@ -209,7 +209,7 @@ const listarCasos = () => listar(casosArr, url);
 // execute on component load
 listarCasos();
 listar(denunciasArr, "/denuncia");
-listar(comisionesArr, "/comision");
+listar(commissionsArr, "/comision");
 
 //form dialog model
 const showForm = ref(false);

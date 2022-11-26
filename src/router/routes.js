@@ -10,18 +10,18 @@ const routes = [
       },
       {
         name: "Resoluciones",
-        path: "/resoluciones",
-        component: () => import("pages/ListPages/PageResoluciones.vue"),
+        path: "/resolutions",
+        component: () => import("pages/ListPages/PageResolutions.vue"),
       },
       {
         name: "Comisiones Disciplinarias",
-        path: "/comisiones",
-        component: () => import("pages/ListPages/PageComisiones.vue"),
+        path: "/commissions",
+        component: () => import("pages/ListPages/PageCommissions.vue"),
       },
       {
         name: "Denuncias",
-        path: "/denuncias",
-        component: () => import("pages/ListPages/PageDenuncias.vue"),
+        path: "/denunciations",
+        component: () => import("pages/ListPages/PageDenunciations.vue"),
       },
       {
         name: "Usuarios",
@@ -35,8 +35,8 @@ const routes = [
       },
       {
         name: "Casos disciplinarios",
-        path: "/casos",
-        component: () => import("pages/ListPages/PageCasos.vue"),
+        path: "/cases",
+        component: () => import("pages/ListPages/PageCases.vue"),
       },
       {
         name: "Conclusiones",

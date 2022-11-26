@@ -29,7 +29,7 @@ export const rolesArr = ref([]);
 export const denunciasArr = ref([]);
 export const casosArr = ref([]);
 export const declaracionesArr = ref([]);
-export const comisionesArr = ref([]);
+export const commissionsArr = ref([]);
 export const permisosArr = ref([]);
 watch(permisosArr, () => permisosArrToLabeled(permisosArr.value)); // Se actualizan las etiquetas de los permisos cada vez que mute el arreglo
 

@@ -27,13 +27,13 @@
           :dense="state.dense"
           label="Número"
           :readonly="update"
-          max-length="4"
+          max-length="13"
           class="q-mb-md"
         />
 
-        <!--        COMISIONES-->
+        <!--        commissions-->
         <q-card
-          v-for="(c, i) in resolutionObject.comisiones"
+          v-for="(c, i) in resolutionObject.commissions"
           :key="i"
           flat
           bordered
@@ -52,7 +52,7 @@
                   title="Descartar comisión"
                   flat
                   icon="r_close"
-                  @click="resolutionObject.comisiones.splice(i, 1)"
+                  @click="resolutionObject.commissions.splice(i, 1)"
                 />
               </div>
             </div>
@@ -63,7 +63,7 @@
               :readonly="update"
               v-model="c.president"
               :dense="state.dense"
-              :options="usersArr"
+              :options="userSt.array"
               :rules="[val || 'Por favor, seleccione un presidente']"
               label="Presidente"
               lazy-rules
@@ -73,17 +73,17 @@
               option-value="id"
             />
             <q-select
+              label="Secretario"
               :readonly="update"
               v-model="c.secretary"
               :dense="state.dense"
-              :options="usersArr"
+              :options="userSt.array"
               :rules="[val || 'Por favor, seleccione un secretario']"
-              label="Secretario"
               lazy-rules
               map-options
-              option-label="name"
               emit-value
               option-value="id"
+              option-label="name"
             />
           </q-card-section>
         </q-card>
@@ -97,13 +97,11 @@
           spread
           no-caps
           class="full-width"
-          :label="`Comisión ${resolutionObject.comisiones.length + 1}`"
+          :label="`Comisión ${resolutionObject.commissions.length + 1}`"
           @click="
-            resolutionObject.comisiones.push({
-              presidente: '',
-              secretario: '',
-              idRolP: 4,
-              idRolS: 5,
+            resolutionObject.commissions.push({
+              president: null,
+              secretary: null,
             })
           "
         />
@@ -124,7 +122,7 @@
     ></ListPage>
     <DevInfo>
       resolutionObject: {{ resolutionObject }}<br />
-      resolutionesArr: {{ resolutionesArr }}
+      resolutionStore.array: {{ s.array }}
     </DevInfo>
     <!--    No hay endpoint en el backend para modificar la resolution-->
   </q-page>
@@ -135,14 +133,11 @@ import ListPage from "components/ListPage.vue";
 import BaseForm from "components/BaseForm.vue";
 import DevInfo from "components/DevInfo.vue";
 import listar, { eliminar, guardar } from "src/composables/useAPI.js";
-import state, {
-  usersArr,
-  permisosArr,
-  resolutionesArr,
-  pathToCurso,
-} from "src/composables/useState.js";
+import state, { pathToCurso } from "src/composables/useState.js";
+import { useUserStore } from "src/stores/userStore";
 import { useResolutionStore } from "src/stores/resolutionStore";
-const s = useresolutionStore();
+const userSt = useUserStore();
+const s = useResolutionStore();
 s.refresh();
 
 // MODIFICAR (Abrir formulario con datos del objeto a modificar)
@@ -153,34 +148,17 @@ const resolutionExportObject = ref({});
 const update = computed(() => resolutionObject.value.id !== undefined);
 //openForm triggered on: Nueva entrada, Modificar
 const currentYear = new Date().getFullYear();
-const curso = `${currentYear}-${currentYear + 1}`;
-const openForm = (
+const curso = `1/${currentYear}-${currentYear + 1}`;
+function openForm(
   obj = {
-    ano: curso,
-    comisiones: [
-      {
-        idRolP: 4,
-        idRolS: 5,
-      },
-    ],
+    number: curso,
+    commissions: [{ president: null, secretary: null }],
   }
-) => {
+) {
   resolutionRowObject.value = obj;
   resolutionObject.value = obj;
-  let resolutionDto = {};
-  if (obj.id !== undefined) {
-    resolutionDto.id = obj.id;
-    resolutionDto.ano = pathToCurso(obj.url);
-    resolutionDto.comisiones = obj.comisionList.map((c) => {
-      return {
-        presidente: c.comisionUsuarioList[0]?.usuario?.usuario,
-        secretario: c.comisionUsuarioList[1]?.usuario?.usuario,
-      };
-    });
-    resolutionObject.value = resolutionDto;
-  }
   showForm.value = true;
-};
+}
 
 //SUBMIT
 function submitFormData() {
@@ -190,7 +168,7 @@ function submitFormData() {
 }
 //RESET
 function resetFormData() {
-  resolutionObject.value = { ano: curso, comisiones: [{}] };
+  resolutionObject.value = { ano: curso, commissions: [{}] };
 }
 
 // delete tuples by array of objects
@@ -207,9 +185,9 @@ const resolutionFields = ref([
   {
     name: "commissions",
     required: true,
-    label: "Comisiones",
+    label: "commissions",
     align: "left",
-    field: (r) => r.comisionList.map((c) => c.id),
+    field: (r) => r.commissions.map((c) => c.president.name),
     sortable: true,
   },
 ]);

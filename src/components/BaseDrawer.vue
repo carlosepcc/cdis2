@@ -14,13 +14,13 @@ const drawerItems = [
   {
     title: "Denuncias",
     icon: "r_announcement",
-    to: "denuncias",
+    to: "denunciations",
     for: [r.user],
   },
   {
     title: "Comisiones Disciplinarias",
     icon: "r_admin_panel_settings",
-    to: "comisiones",
+    to: "commissions",
     for: [r.dec],
   },
   {
@@ -32,25 +32,25 @@ const drawerItems = [
   {
     title: "Declaraciones",
     icon: "r_chat",
-    to: "declaraciones",
+    to: "declarations",
     for: [r.user, r.pres, r.sec],
   },
   {
     title: "Casos",
     icon: "r_assignment_ind",
-    to: "casos",
+    to: "cases",
     for: [r.dec, r.pre, r.sec, r.voc],
   },
   {
     title: "Conclusiones",
-    icon: "r_copy",
+    icon: "r_article",
     to: "conclusions",
     for: [r.pre, r.sec, r.dec],
   },
   {
     title: "Resoluciones",
     icon: "r_article",
-    to: "resoluciones",
+    to: "resolutions",
     for: [r.dec],
   },
 

@@ -44,7 +44,7 @@ export const useResolutionStore = defineStore("resolution", () => {
   }
   function refresh() {
     console.log("Refreshing resoluciones list");
-    array.value = read();
+    apiStore.read(url, array);
   }
   function save(objectToSave, isUpdate = objectToSave.id) {
     return apiStore.save(objectToSave, url, isUpdate);

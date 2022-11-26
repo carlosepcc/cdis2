@@ -26,7 +26,7 @@
         <q-select
           v-model="casoObject.idComision"
           :dense="state.dense"
-          :options="comisionesArr"
+          :options="commissionsArr"
           :rules="[val || 'Por favor, seleccione una comisión']"
           filled
           lazy-rules
@@ -64,7 +64,7 @@ import listar, { eliminar, guardar } from "src/composables/useAPI.js";
 import state, {
   casosArr,
   denunciasArr,
-  comisionesArr,
+  commissionsArr,
 } from "src/composables/useState.js";
 const casoFields = ref([
   {
@@ -104,7 +104,7 @@ const listarCasos = () => listar(casosArr, url);
 // execute on component load
 listarCasos();
 listar(denunciasArr, "/denuncia");
-listar(comisionesArr, "/comision");
+listar(commissionsArr, "/comision");
 
 //form dialog model
 const showForm = ref(false);

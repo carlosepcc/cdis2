@@ -32,7 +32,7 @@
       />
       <q-select
         label="Cargo"
-        v-model="userObject.cargo"
+        v-model="userObject.position"
         :dense="state.dense"
         :options="s.cargos"
         :rules="[val || 'Por favor, seleccione una opción']"
@@ -128,34 +128,34 @@ function deleteTuples(selectedRows = []) {
 //Campos de la tabla
 const columns = ref([
   {
-    name: "nombre",
-    required: true,
     label: "Nombre",
+    name: "name",
+    required: true,
     align: "left",
-    field: "nombre",
+    field: "name",
     sortable: true,
   },
   {
-    name: "usuario",
-    required: true,
     label: "Usuario",
-    align: "left",
-    field: "usuario",
-    sortable: true,
-  },
-  {
-    name: "cargo",
+    name: "username",
     required: true,
-    label: "Cargo",
-    align: "center",
-    field: (u) => u.cargo ?? "Sin cargo",
+    align: "username",
+    field: "username",
     sortable: true,
   },
   {
-    name: "rol",
-    label: "Rol",
+    label: "Cargo",
+    name: "position",
+    required: true,
     align: "center",
-    field: "rolLabel",
+    field: (u) => u.position ?? "Sin cargo",
+    sortable: true,
+  },
+  {
+    label: "Rol",
+    name: "role",
+    align: "center",
+    field: (u) => u.roles[1],
     sortable: true,
   },
 ]);

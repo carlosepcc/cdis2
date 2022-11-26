@@ -21,13 +21,15 @@
           option-label="descripcion"
           emit-value
           option-value="id"
-        > <template v-slot:no-option>
-          <q-item>
-            <q-item-section class="text-grey">
-              No hay opciones
-            </q-item-section>
-          </q-item>
-        </template></q-select>
+        >
+          <template v-slot:no-option>
+            <q-item>
+              <q-item-section class="text-grey">
+                No hay opciones
+              </q-item-section>
+            </q-item>
+          </template></q-select
+        >
         <q-select
           v-model="comisionObject.integrantesComision[0].usuario"
           :dense="state.dense"
@@ -42,37 +44,36 @@
           option-value="username"
         />
         <q-select
-        v-model="comisionObject.integrantesComision[1].usuario"
-        :dense="state.dense"
-        :options="usersArr"
-        :rules="[val || 'Por favor, seleccione un secretario']"
-        filled
-        label="Secretario"
-        lazy-rules
-        map-options
-        option-label="nombre"
-        emit-value
-        option-value="username"
-      />
+          v-model="comisionObject.integrantesComision[1].usuario"
+          :dense="state.dense"
+          :options="usersArr"
+          :rules="[val || 'Por favor, seleccione un secretario']"
+          filled
+          label="Secretario"
+          lazy-rules
+          map-options
+          option-label="nombre"
+          emit-value
+          option-value="username"
+        />
 
         <pre v-if="state.loggedUser.usuario == 'admin'">
           Developer info
-          {{comisionObject}}
+          {{ comisionObject }}
         </pre>
       </template>
     </BaseForm>
     <ListPage
       :columns="comisionFields"
-      :rows="comisionesArr"
-      heading="comisiones"
+      :rows="commissionsArr"
+      heading="commissions"
       rowKey="id"
       @updateList="listarComisiones"
       @open-form="(payload) => openForm(payload)"
       @delete-rows="(selectedRows) => deleteTuples(selectedRows)"
     ></ListPage>
     <DevInfo>
-      comisinObject: {{comisionObject}}
-      comisionesArr: {{comisionesArr}}
+      comisinObject: {{ comisionObject }} commissionsArr: {{ commissionsArr }}
     </DevInfo>
   </q-page>
 </template>
@@ -82,7 +83,12 @@ import ListPage from "components/ListPage.vue";
 import BaseForm from "components/BaseForm.vue";
 import DevInfo from "components/DevInfo.vue";
 import listar, { eliminar, guardar } from "src/composables/useAPI.js";
-import state, { usersArr,comisionesArr,resolucionesArr,pathToCurso } from "src/composables/useState.js";
+import state, {
+  usersArr,
+  commissionsArr,
+  resolucionesArr,
+  pathToCurso,
+} from "src/composables/useState.js";
 
 const comisionFields = ref([
   {
@@ -90,7 +96,7 @@ const comisionFields = ref([
     required: true,
     label: "Resolución",
     align: "left",
-    field: c => pathToCurso(c.resolucion.url),
+    field: (c) => pathToCurso(c.resolucion.url),
     sortable: true,
   },
   {
@@ -98,7 +104,7 @@ const comisionFields = ref([
     required: true,
     label: "Presidente",
     align: "left",
-    field: c => c.comisionUsuarioList[1]?.usuario?.nombre ?? 'Sin presidente',
+    field: (c) => c.comisionUsuarioList[1]?.usuario?.nombre ?? "Sin presidente",
     sortable: true,
   },
   {
@@ -106,14 +112,17 @@ const comisionFields = ref([
     required: true,
     label: "Secretario",
     align: "left",
-    field: c => c.comisionUsuarioList[1]?.usuario?.nombre ?? 'Sin secretario',
+    field: (c) => c.comisionUsuarioList[1]?.usuario?.nombre ?? "Sin secretario",
     sortable: true,
-  },{
+  },
+  {
     name: "caso",
     required: true,
     label: "Último caso",
     align: "left",
-    field: c => c.casoList[casoList.length-1]?.casoPK?.denuncia ?? 'Sin casos asignados',
+    field: (c) =>
+      c.casoList[casoList.length - 1]?.casoPK?.denuncia ??
+      "Sin casos asignados",
     sortable: true,
   },
 ]);
@@ -121,11 +130,11 @@ const comisionFields = ref([
 const url = "/comision";
 
 //listar
-const listarComisiones = () => listar(comisionesArr, url);
-const listarResoluciones = () => listar(resolucionesArr, '/resolucion')
+const listarComisiones = () => listar(commissionsArr, url);
+const listarResoluciones = () => listar(resolucionesArr, "/resolucion");
 // execute on component load
-listarComisiones()
-listarResoluciones()
+listarComisiones();
+listarResoluciones();
 
 //form dialog model
 const showForm = ref(false);
@@ -133,14 +142,16 @@ const showForm = ref(false);
 //closeForm triggered on: Cancel
 const closeForm = () => {
   showForm.value = false;
-  listarComisiones()
+  listarComisiones();
 };
 
 // MODIFICAR (Abrir formulario con datos del objeto a modificar)
 const comisionObject = ref({});
 
 //openForm triggered on: Nueva entrada, Modificar
-const openForm = (obj = {integrantesComision:[{idRol:11},{idRol:5}]}) => {
+const openForm = (
+  obj = { integrantesComision: [{ idRol: 11 }, { idRol: 5 }] }
+) => {
   comisionObject.value = obj;
   showForm.value = true;
   console.log(`openForm triggered. showForm.value is ${showForm.value}`);
@@ -148,7 +159,7 @@ const openForm = (obj = {integrantesComision:[{idRol:11},{idRol:5}]}) => {
 
 //SUBMIT
 function submitFormData() {
-  guardar(comisionObject.value, comisionesArr, url);
+  guardar(comisionObject.value, commissionsArr, url);
 }
 //RESET
 function resetFormData() {
@@ -157,5 +168,5 @@ function resetFormData() {
 
 // delete tuples by array of objects
 const deleteTuples = (selectedRows = []) =>
-  eliminar(selectedRows, comisionesArr, url);
+  eliminar(selectedRows, commissionsArr, url);
 </script>
