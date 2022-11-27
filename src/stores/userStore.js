@@ -7,44 +7,31 @@ export const useUserStore = defineStore("user", () => {
   const apiStore = useApiStore();
   const rolStore = useRolStore();
   const url = apiStore.urls.user;
-  const array = ref([
-    { usuario: "carloseam", nombre: "Carlos Ernesto Pérez Carriles" },
-
-    { usuario: "angellf", nombre: "Carlos Ernesto Abreu Martínez" },
-  ]);
+  const array = ref([]);
   const mockArray = [
     {
-      usuario: "denunciauno",
-      nombre: "Denunciante Uno",
-      rol: { rol: "roluno", tipo: "sistema" },
+      user: "denunciauno",
+      name: "Denunciante Uno",
+      roles: ["USER", "ADMIN"],
       cargo: "Cargouno",
       permisos: "ROLE_C_DENUNCIA",
-    },
-    {
-      usuario: "string",
-      nombre: "string",
-      contrasena: "string",
-      sexo: "string",
-      categoriacientifica: "string",
-      rol: {
-        rol: "string",
-        tipo: "string",
-      },
     },
   ];
   //GETTERS
   const arrayUi = computed(() => {
-    return array.value.map((v) => {
-      return {
-        usuario: v.usuario,
-        nombre: v.nombre,
-        sexo: v.sexo,
-        cargo: v.cargo,
-        categoriacientifica: v.categoriacientifica,
-        rol: v.rol,
-        rolLabel: rolStore.rolStrToLabel(v.rol),
-      };
-    });
+    return array;
+    // .value.map((v) => {
+    //   return {
+    //     username: v.user,
+    //     name: v.name,
+    //     genre: v.genre,
+    //     position: v.position,
+    //     scientificCategory: v.scientificCategory,
+    //     role: v.roles[1],
+    //     roles: v.roles,
+    //     roleThumbnail: v.roles[1][0],
+    //   };
+    // });
   });
   //FUNCTIONS ACTIONS
   // LISTAR (Actualizar Arreglos en el cliente con datos del servidor)

@@ -47,16 +47,13 @@ export const useResolutionStore = defineStore("resolution", () => {
     apiStore.read(url, array);
   }
   function save(objectToSave, isUpdate = objectToSave.id) {
-    return apiStore.save(objectToSave, url, isUpdate);
+    return apiStore.save(objectToSave, url, isUpdate, array);
   }
   function update(objectToUpdate) {
-    return apiStore.save(objectToUpdate, url, true);
+    return apiStore.save(objectToUpdate, url, true, array);
   }
-  function create(objectToCreate) {
-    return apiStore.save(objectToCreate, url, false);
-  }
-  function del(itemsToDelete) {
-    return apiStore.del(itemsToDelete, url);
+  function del(itemsToDelete = []) {
+    return apiStore.del(itemsToDelete, url, array);
   }
 
   return {
@@ -67,6 +64,5 @@ export const useResolutionStore = defineStore("resolution", () => {
     save,
     del,
     update,
-    create,
   };
 });

@@ -29,11 +29,6 @@ const routes = [
         component: () => import("pages/ListPages/PageUsers.vue"),
       },
       {
-        name: "Roles",
-        path: "/roles",
-        component: () => import("pages/ListPages/PageRoles.vue"),
-      },
-      {
         name: "Casos disciplinarios",
         path: "/cases",
         component: () => import("pages/ListPages/PageCases.vue"),

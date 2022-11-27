@@ -53,7 +53,7 @@
     </BaseForm>
     <ListPage
       :columns="columns"
-      :rows="s.arrayUi"
+      :rows="s.array"
       heading="Usuarios"
       rowKey="usuario"
       @updateList="s.refresh"
@@ -64,7 +64,7 @@
     >
     </ListPage>
     <DevInfo>
-      {{ s.arrayUi }}
+      {{ s.array }}
     </DevInfo>
   </q-page>
 </template>
@@ -73,17 +73,10 @@ import { ref } from "vue";
 import ListPage from "components/ListPage.vue";
 import BaseForm from "components/BaseForm.vue";
 import DevInfo from "components/DevInfo.vue";
-import state, { rolesArr } from "src/composables/useState.js";
+import state from "src/composables/useState.js";
 import { useUserStore } from "src/stores/userStore";
-import { useRolStore } from "src/stores/rolStore";
-const rolStore = useRolStore();
-rolStore.refresh();
 const s = useUserStore();
 s.refresh();
-
-// execute on component load
-//listar()
-//listar(rolesArr, '/rol')
 
 //form dialog model
 const showForm = ref(false);
@@ -101,13 +94,7 @@ const isUpdate = ref(false); //Is user object meant to be an update of an existi
 const openForm = (obj) => {
   if (obj) {
     isUpdate.value = true;
-    userObject.value = {
-      rol: obj.rol,
-      usuario: obj.usuario,
-      nombre: obj.nombre,
-      sexo: obj.sexo,
-      categoriacientifica: obj.categoriacientifica,
-    };
+    userObject.value = obj;
   } else isUpdate.value = false;
   showForm.value = true;
 };

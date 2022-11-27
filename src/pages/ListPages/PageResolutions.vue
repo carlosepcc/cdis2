@@ -3,13 +3,13 @@
     <BaseForm
       v-model="showForm"
       v-show="showForm"
-      formTitle="resolution"
+      formTitle="Resolución"
       @submit="submitFormData"
       @reset="resetFormData"
       @close-form="closeForm"
       :isModifying="update"
     >
-      <template v-slot:header v-if="update">VER resolution</template>
+      <template v-slot:header v-if="update">VER RESOLUCIÓN</template>
       <template v-slot:footer v-if="update">
         <q-btn
           flat
@@ -117,7 +117,7 @@
       rowKey="id"
       @updateList="s.refresh"
       @open-form="(payload) => openForm(payload)"
-      @delete-rows="(selectedRows) => deleteTuples(selectedRows)"
+      @delete-rows="(selectedRows) => s.del(selectedRows)"
       :canUpdate="false"
     ></ListPage>
     <DevInfo>
@@ -136,9 +136,12 @@ import listar, { eliminar, guardar } from "src/composables/useAPI.js";
 import state, { pathToCurso } from "src/composables/useState.js";
 import { useUserStore } from "src/stores/userStore";
 import { useResolutionStore } from "src/stores/resolutionStore";
+import { useAuthStore } from "src/stores/authStore";
+const auth = useAuthStore();
 const userSt = useUserStore();
 const s = useResolutionStore();
 s.refresh();
+userSt.refresh();
 
 // MODIFICAR (Abrir formulario con datos del objeto a modificar)
 const resolutionObject = ref({});
@@ -152,7 +155,7 @@ const curso = `1/${currentYear}-${currentYear + 1}`;
 function openForm(
   obj = {
     number: curso,
-    commissions: [{ president: null, secretary: null }],
+    commissions: [{}, {}],
   }
 ) {
   resolutionRowObject.value = obj;
@@ -162,6 +165,7 @@ function openForm(
 
 //SUBMIT
 function submitFormData() {
+  resolutionObject.value.resolutor = auth.loggedUser.id;
   s.save(resolutionObject.value);
   resetFormData();
   closeForm();
@@ -172,8 +176,9 @@ function resetFormData() {
 }
 
 // delete tuples by array of objects
-const deleteTuples = (selectedRows = []) =>
-  s.del(selectedRows, resolutionesArr, url);
+function deleteTuples(selectedRows = []) {
+  s.del(selectedRows);
+}
 const resolutionFields = ref([
   {
     name: "number",

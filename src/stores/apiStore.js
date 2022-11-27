@@ -45,7 +45,7 @@ export const useApiStore = defineStore("api", () => {
         notifyError(
           error,
           {
-            message: `Carga fallida de ${url}. ${error.response.data.mensaje}`,
+            message: `Carga fallida de ${url}. ${error.message}`,
           },
           noti
         );
@@ -53,23 +53,108 @@ export const useApiStore = defineStore("api", () => {
     return responseData;
   }
 
-  function save(objectToSave, url, isUpdate = objectToSave.id) {
+  function save(objectToSave, url, isUpdate = objectToSave.id, refArray) {
     console.info("save function triggered");
-    if (offlineApiTesting) {
-      let localKey = url + objectToSave.id ?? Math.random().toString;
-      localStorage.setItem(localKey, objectToSave);
-      return localStorage.getItem(localKey);
-    }
-  }
-  function del(itemsToDelete = [], url = urls.value.usuario) {
-    console.info("del function triggered");
-    if (offlineApiTesting) {
-      itemsToDelete.forEach((item) => {
-        let localKey = url + item.id;
-        localStorage.removeItem(localKey);
-        console.info("deleted item: " + localKey);
+    let noti = Notify.create({
+      type: "ongoing",
+      message: `Guardando. ${url}`,
+      spinner: QSpinnerGears,
+      actions: [{ label: "Ocultar", color: "white" }],
+    });
+
+    api({
+      method: isUpdate ? "put" : "post",
+      url: url,
+      data: objectToSave,
+      headers: {
+        "Content-Type": objectToSave.file
+          ? "multipart/form-data"
+          : "application/json",
+      },
+    })
+      .then((response) => {
+        // handle success
+        noti({
+          type: "positive",
+          spinner: null,
+          message: "Acción realizada con éxito.",
+          actions: [{ label: "OK", color: "white" }],
+        });
+        read(url, refArray);
+        return response.data;
+      })
+      .catch((error) => {
+        console.log("🚀 ~ file: useAPI.js ~ line 189 ~ guardar ~ error", error);
+        notifyError(error, noti, "Guardado fallido");
       });
-    }
+  }
+
+  function del(itemsToDelete = [], url = urls.user, refArray) {
+    console.info(
+      `del function triggered for ${url}, items to delete: `,
+      itemsToDelete
+    );
+
+    Dialog.create({
+      title: "Confirme la eliminación",
+      message: "La eliminación será permanente.",
+      persistent: true,
+      color: "negative",
+      ok: { label: "Eliminar", noCaps: true, flat: true },
+      cancel: { color: "primary", noCaps: true, flat: true },
+    })
+      .onOk(() => {
+        let noti = Notify.create({
+          type: "ongoing",
+          position: "bottom",
+          message: `Eliminando ${itemsToDelete.value.length} entrada${
+            itemsToDelete.value.length === 1 ? "." : "s."
+          } ${url}`,
+          spinner: QSpinnerGears,
+          actions: [{ label: "Ocultar", color: "white" }],
+        });
+
+        //CREATE an idsArray from the objects array
+        // /* let idsUrl = url + "/";
+        // objArr.forEach((obj) => idsUrl.push(`${obj.id},`));
+        // idsUrl.pop(); */
+        let idsArr = [];
+        itemsToDelete.value.forEach((obj) => idsArr.push(obj.id)); //Se llena el arreglo de ids con los ids de los objetos del arreglo de objetos
+        //REQUEST TO SERVER
+        api({
+          method: "delete",
+          url: url,
+          data: idsArr,
+        })
+          .then((response) => {
+            // handle success
+            itemsToDelete = []; //Desceleccionar las filas si se completó la petición con éxito
+            read(url, refArray);
+            noti({
+              type: "positive",
+              spinner: null,
+              // message: `Eliminación exitosa de (${idsArr.length}) entrada${idsArr.length == 1 ? "." : "s."  })`,
+              message: "Acción realizada con éxito.",
+              timeout: 1000,
+              actions: [{ label: "OK", color: "white" }],
+            });
+          })
+          .catch((error) => {
+            console.log("Error deleting: ", error);
+            notifyError(
+              error,
+              noti,
+              (heading = `Eliminación fallida de ${url}`)
+            );
+          })
+          .then(() => {
+            // always
+            return idsArr;
+          });
+      })
+      .onCancel(() => {
+        return "Canceled by user";
+      });
   }
   return {
     offlineApiTesting,

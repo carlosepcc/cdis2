@@ -42,7 +42,7 @@ let u = auth.loggedUserUi;
           rounded
           color="transparent"
           class="text-weight-bold text-yellow-1"
-          >{{ u.rolethumbnail }}</q-badge
+          >{{ u.roleThumbnail }}</q-badge
         >
       </q-avatar>
     </q-item-section>
