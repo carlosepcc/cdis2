@@ -2,17 +2,20 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useApiStore } from "src/stores/apiStore.js";
 import { urls } from "src/composables/useAPI";
-export const useResolutionStore = defineStore("resolution", () => {
+export const useDeclarationStore = defineStore("declaration", () => {
+  const declaration = {
+    description: String,
+  };
   //COMPOSITING STORES
   const apiStore = useApiStore();
-  const url = urls.resolution;
+  const url = urls.declaration;
   const array = ref([]);
 
   //FUNCTIONS ACTIONS
   // LISTAR (Actualizar Arreglos en el cliente con datos del servidor)
 
   function refresh() {
-    console.log("Refreshing resoluciones list");
+    console.log("Refreshing declarations list");
     apiStore.read(url, array);
   }
   function save(objectToSave, isUpdate = objectToSave.id) {

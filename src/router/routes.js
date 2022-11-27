@@ -14,11 +14,6 @@ const routes = [
         component: () => import("pages/ListPages/PageResolutions.vue"),
       },
       {
-        name: "Comisiones Disciplinarias",
-        path: "/commissions",
-        component: () => import("pages/ListPages/PageCommissions.vue"),
-      },
-      {
         name: "Denuncias",
         path: "/denunciations",
         component: () => import("pages/ListPages/PageDenunciations.vue"),
@@ -40,8 +35,8 @@ const routes = [
       },
       {
         name: "Declaraciones",
-        path: "/declaraciones",
-        component: () => import("pages/ListPages/PageDeclaraciones.vue"),
+        path: "/declarations",
+        component: () => import("pages/ListPages/PageDeclarations.vue"),
       },
       {
         name: "Imprimir",

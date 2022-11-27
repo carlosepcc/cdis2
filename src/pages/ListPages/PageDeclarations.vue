@@ -3,17 +3,17 @@
     <BaseForm
       v-model="showForm"
       v-show="showForm"
-      formTitle="Declaracion"
+      formTitle="Declaración"
       @submit="submitFormData"
       @reset="resetFormData"
-      @close-form="closeForm"
+      @close-form="showForm = false"
     >
       <template v-slot:default>
-        <!-- Nombre declaracion -->
+        <!-- Nombre declaration -->
         <q-select
-          v-model="declaracionObject.idDenuncia"
+          v-model="declarationObject.denunciation"
           :dense="state.dense"
-          :options="denunciasArr"
+          :options="denunciationStore.array"
           :rules="[val || 'Por favor, seleccione una opción']"
           filled
           lazy-rules
@@ -21,12 +21,12 @@
           emit-value
           label="Caso disciplinario"
           behavior="dialog"
-          :option-label="(d) => d.descripcion.slice(0, 50) + '(...)'"
+          :option-label="(d) => d.description.slice(0, 50) + '(...)'"
           option-value="id"
         />
         <q-select
-          v-model="declaracionObject.usuario"
-          :options="usersArr"
+          v-model="declarationObject.declarer"
+          :options="userStore.array"
           :dense="state.dense"
           :rules="[val || 'Por favor, seleccione un usuario']"
           label="Usuario a declarar"
@@ -34,136 +34,125 @@
           filled
           map-options
           emit-value
-          option-label="nombre"
-          option-value="usuario"
+          option-label="name"
+          option-value="id"
         />
+        <q-input
+          label="Título"
+          :disable="
+            auth.loggedUserUi.role != roles.pre &&
+            auth.loggedUserUi.role != roles.adm
+          "
+          filled
+          :dense="state.dense"
+          v-model.trim="declarationObject.title"
+          :rules="[val || 'Por favor, escriba un título']"
+        />
+        <!-- Descripción declaración -->
+        <q-input
+          label="Descripción"
+          :v-show="false"
+          v-model.trim="declarationObject.description"
+          :dense="state.dense"
+          :rules="[
+            (val) =>
+              (val && val.length > 0) || 'Este campo no puede estar vacío',
+          ]"
+          autogrow
+          clearable
+          filled
+          lazy-rules
+        />
+        <DevInfo>
+          declarationObject: {{ declarationObject }}<br />
+          declarationStore.array: {{ s.array }}
+        </DevInfo>
       </template>
     </BaseForm>
     <ListPage
-      :columns="declaracionFields"
-      :rows="declaracionesArr"
-      heading="Declaraciones"
-      rowKey="declaracionPK"
-      @updateList="listarDeclaraciones"
+      :columns="declarationFields"
+      :rows="s.array"
+      heading="Declarations"
+      rowKey="id"
+      @updateList="s.refresh()"
       @open-form="(payload) => openForm(payload)"
-      @delete-rows="(selectedRows) => deleteTuples(selectedRows)"
+      @delete-rows="(selectedRows) => s.del(selectedRows)"
     ></ListPage>
   </q-page>
 </template>
 <script setup>
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import ListPage from "components/ListPage.vue";
 import BaseForm from "components/BaseForm.vue";
-import listar, { eliminar, guardar } from "src/composables/useAPI.js";
-import state, { denunciasArr, usersArr } from "src/composables/useState.js";
-
-/*Get /declaracion [ {
-    "declaracionPK": {
-      "usuario": "string",
-      "casocomision": 0,
-      "casodenuncia": 0
-    },
-    "abierta": true,
-    "fecha": "2022-06-19T06:46:21.565Z",
-    "declaracion": "string",
-    "expediente": "string",
-    "caso": {
-      "casoPK": {
-        "comision": 0,
-        "denuncia": 0
-      },
-      "abierto": true,
-      "fechaapertura": "2022-06-19T06:46:21.565Z",
-      "fechaexpiracion": "2022-06-19T06:46:21.565Z",
-      "dictamen": "string"
-    }
-  }] */
-const declaracionFields = ref([
-  {
-    name: "usuario",
-    required: true,
-    label: "Usuario",
-    align: "left",
-    field: (declaracion) => declaracion.id?.usuario,
-    sortable: true,
-  },
-  {
-    name: "caso",
-    required: true,
-    label: "Caso",
-    align: "left",
-    field: (declaracion) => declaracion.caso?.casoPK?.denuncia,
-    sortable: true,
-  },
-  {
-    name: "abierta",
-    required: true,
-    label: "Abierta",
-    align: "left",
-    field: "abierta",
-    sortable: true,
-  },
-  {
-    name: "fecha",
-    required: true,
-    label: "Fecha",
-    align: "left",
-    field: "fecha",
-    sortable: true,
-  },
-  {
-    name: "declaracion",
-    label: "URL de la Declaración",
-    align: "left",
-    field: "declaracion",
-    sortable: true,
-  },
-  {
-    name: "expediente",
-    label: "URL del Expediente",
-    align: "left",
-    field: "expediente",
-    sortable: true,
-  },
-]);
-const declaracionesArr = ref([]);
-const url = "/declaracion";
-
-//listar
-const listarDeclaraciones = () => listar(declaracionesArr, url);
-// execute on component load
-listarDeclaraciones();
-listar();
-listar(denunciasArr, "/denuncia");
-
-//form dialog model
+import DevInfo from "components/DevInfo.vue";
+import state from "src/composables/useState.js";
+import { useDenunciationStore } from "src/stores/denunciationStore";
+import { useUserStore } from "src/stores/userStore";
+import { useDeclarationStore } from "src/stores/declarationStore";
+import { useAuthStore } from "src/stores/authStore";
+import roles from "src/composables/useRoles";
+const auth = useAuthStore();
+const userStore = useUserStore();
+const denunciationStore = useDenunciationStore();
+const s = useDeclarationStore();
+s.refresh();
+userStore.refresh();
+denunciationStore.refresh();
 const showForm = ref(false);
 
-//closeForm triggered on: Cancel
-const closeForm = () => {
-  showForm.value = false;
-  listarDeclaraciones();
-};
-
 // MODIFICAR (Abrir formulario con datos del objeto a modificar)
-const declaracionObject = ref({});
+const declarationObject = ref({ title: "Declaración del " });
 
+const update = computed(() => declarationObject.value.id !== undefined);
 //openForm triggered on: Nueva entrada, Modificar
-const openForm = (obj = {}) => {
-  declaracionObject.value = obj;
+function openForm(obj = { title: "Declaración del " }) {
+  declarationObject.value = obj;
   showForm.value = true;
-};
+}
 
 //SUBMIT
 function submitFormData() {
-  guardar(declaracionObject.value, declaracionesArr, url);
+  s.save(declarationObject.value);
+  resetFormData();
+  showForm.value = false;
 }
 //RESET
 function resetFormData() {
-  declaracionObject.value = null;
+  declarationObject.value = {};
 }
 
-// delete tuples by array of objects
-const deleteTuples = (selectedRows = []) =>
-  eliminar(selectedRows, declaracionesArr, url);
+const declarationFields = ref([
+  {
+    name: "declarer",
+    required: true,
+    label: "Declarante",
+    align: "left",
+    field: (d) => d.declarer.name,
+    sortable: true,
+  },
+  {
+    name: "denunciation",
+    required: true,
+    label: "Caso",
+    align: "left",
+    field: (dec) => dec.denunciation.subject,
+    sortable: true,
+  },
+  {
+    name: "status",
+    required: true,
+    label: "Estado",
+    align: "left",
+    field: "status",
+    sortable: true,
+  },
+  {
+    name: "date",
+    required: true,
+    label: "Fecha",
+    align: "left",
+    field: "date",
+    sortable: true,
+  },
+]);
 </script>

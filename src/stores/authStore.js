@@ -22,9 +22,9 @@ export const useAuthStore = defineStore("auth", () => {
       username: loggedUser.value?.username,
       name: loggedUser.value?.name,
       thumbnail: loggedUser.value?.name[0].toUpperCase(), //thumbnails supports html
-      role: loggedUser.value?.roles[1],
+      role: loggedUser.value?.roles.at(-1),
       roles: loggedUser.value?.roles,
-      roleThumbnail: loggedUser.value?.roles[1][0], //thumbnails supports html
+      roleThumbnail: loggedUser.value?.roles.at(-1)[0], //thumbnails supports html
     };
   });
 

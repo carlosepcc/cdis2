@@ -1,7 +1,12 @@
 <template>
-  <q-card bordered flat class="q-my-sm opaque">
+  <q-card
+    v-if="auth.loggedUserUi?.role === r.adm"
+    bordered
+    flat
+    class="q-my-sm opaque"
+  >
     <q-card-section class="q-py-xs q-px-sm">
-      <details v-if="auth.loggedUser?.roles[1] == r.adm">
+      <details>
         <summary class="cursor-pointer">
           Información para desarrolladores:
         </summary>

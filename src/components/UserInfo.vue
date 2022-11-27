@@ -11,7 +11,9 @@ let u = auth.loggedUserUi;
     clickable
     v-ripple
     class="text-white q-py-none absolute-right"
-    :title="u.username + '. ' + u.name + '. ' + u.permits"
+    :title="`Usuario: ${u.username}. Nombre: ${u.name}. Rol: ${
+      u.role
+    }. Cargo: ${u.position ?? 'Ninguno'}`"
   >
     <!--    INFORMACIÓN DEL USUARIO-->
     <q-item-section>
@@ -21,7 +23,7 @@ let u = auth.loggedUserUi;
         </span>
       </q-item-label>
       <q-item-label class="text-orange-1 text-bold" caption>
-        {{ u.role }}
+        {{ u.position ?? u.role }}
       </q-item-label>
     </q-item-section>
     <!--    AVATAR-->

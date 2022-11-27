@@ -5,7 +5,7 @@
         class="card-header opaque row items-center q-py-xs text-h7 text-uppercase text-weight-light"
       >
         <slot name="header">
-          {{ props.isModifying ? "Modificar" : "Crear" }}
+          {{ props.isModifying ? "Modificar" : "Registrar" }}
           {{ props.formTitle }}
         </slot>
         <q-space />
@@ -14,7 +14,7 @@
           :size="state.dense ? 'sm' : 'md'"
           flat
           round
-          title="Cerrar recuadro"
+          title="Cerrar formulario"
           @click="$emit('closeForm')"
         />
       </q-card-section>

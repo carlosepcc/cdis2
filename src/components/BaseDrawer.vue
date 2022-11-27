@@ -17,18 +17,12 @@ const drawerItems = [
     to: "denunciations",
     for: [r.user],
   },
-  {
-    title: "Comisiones Disciplinarias",
-    icon: "r_admin_panel_settings",
-    to: "commissions",
-    for: [r.dec],
-  },
-  {
-    title: "Usuarios",
-    icon: "r_manage_accounts",
-    to: "users",
-    for: [r.adm],
-  },
+  // {
+  //   title: "Usuarios",
+  //   icon: "r_manage_accounts",
+  //   to: "users",
+  //   for: [r.adm],
+  // },
   {
     title: "Declaraciones",
     icon: "r_chat",
@@ -80,30 +74,13 @@ const drawerItems = [
             enter-active-class="animated fadeIn"
             leave-active-class="animated fadeOut"
           >
-            <!--v-if="
-                drawerItem.for == undefined ||
-                (state.loggedUser
-                  ? state.loggedUser.permisos.some((iPermisoObject) =>
-                      drawerItem.for.includes(iPermisoObject.permiso)
-                    )
-                  : false) /*si el item del drawer no tiene for, o el arreglo de permisos del usuario autenticado tiene algún permiso en común con el arreglo fors del item, se muestra, de lo contrario no.*/
-              "
-
-              v-if="
-                drawerItem.for == undefined ||
-                (state.loggedUser
-                  ? state.loggedUser.permisos.some((iPermisoObject) =>
-                      drawerItem.for === iPermisoObject.permiso
-                    )
-                  : false) //TODO /*si el item del drawer no tiene for, o el arreglo de permisos del usuario autenticado tiene algún permiso en común con el arreglo fors del item, se muestra, de lo contrario no.*/
-              "-->
             <DrawerItem
               v-bind="drawerItem"
               v-if="
                 drawerItem.for === undefined ||
                 auth.offlineTesting ||
-                auth.loggedUser?.roles[1] === r.adm ||
-                auth.loggedUser?.roles.some((rol) => drawerItem.for === rol)
+                auth.loggedUserUi?.role === r.adm ||
+                auth.loggedUser?.roles.some((role) => drawerItem.for === role)
               "
             />
             <!-- TODO si el item del drawer no tiene for, o el arreglo de permisos del usuario autenticado tiene algún permiso en común con el arreglo fors del item, se muestra, de lo contrario no. -->

@@ -1,19 +1,6 @@
 <template>
-  <q-page class="column items-center justify-evenly">
-    <LoginForm v-if="!auth.loggedUser" />
-    <div
-      v-if="auth.loggedUser"
-      class="text-grey-8 column items-center backdrop-blur-6 bg-transparent q-pa-sm q-px-md rounded-borders"
-    >
-      <q-icon name="r_support_agent" size="xl"></q-icon>
-      <p class="text-center">
-        Aún no tengo nueva información que mostrarle{{
-          u ? `, ${u.name}` : ""
-        }}.
-      </p>
-    </div>
-
-    <!-- WAVES -->
+  <q-page class="column items-center justify-evenly"
+    ><!-- WAVES -->
     <div class="custom-shape-divider-bottom-1666359708">
       <svg
         data-name="Layer 1"
@@ -36,6 +23,16 @@
           class="shape-fill"
         ></path>
       </svg>
+    </div>
+    <LoginForm v-if="!auth.loggedUser" />
+    <div
+      v-if="auth.loggedUser"
+      class="text-grey-8 column items-center backdrop-blur-6 bg-transparent q-pa-sm q-px-md rounded-borders"
+    >
+      <q-icon name="r_support_agent" size="xl"></q-icon>
+      <p class="text-center">
+        Aún no tengo nueva información que mostrarle{{ u?.name ?? "" }}.
+      </p>
     </div>
   </q-page>
 </template>

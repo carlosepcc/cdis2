@@ -3,55 +3,84 @@
     <BaseForm
       v-model="showForm"
       v-show="showForm"
-      :formTitle="`Denuncia ${denunciaObject.idDenuncia ?? ''}`"
+      :formTitle="`Denuncia ${denunciationObject.idDenuncia ?? ''}`"
       @submit="submitFormData"
       @reset="resetFormData"
       @close-form="closeForm"
       :isModifying="update"
     >
+      <q-select
+        v-if="denunciationObject.id"
+        :disable="
+          auth.loggedUserUi.role != roles.dec &&
+          auth.loggedUserUi.role != roles.adm
+        "
+        v-model="denunciationObject.status"
+        :dense="state.dense"
+        :options="['Pendiente', 'Activa', 'Cerrada', 'Archivada']"
+        :rules="[val || 'Por favor, seleccione los infractores']"
+        filled
+        label="Estado"
+        use-chips
+        lazy-rules
+      />
       <!--TODO @filter="filterFn" use-input -->
       <q-select
-        v-model="denunciaObject.acusados"
+        v-model="denunciationObject.infractors"
         multiple
         :dense="state.dense"
         :options="userStore.array"
-        :rules="[val || 'Por favor, seleccione una opción']"
+        :rules="[val || 'Por favor, seleccione los infractores']"
         filled
-        label="Implicados"
+        label="Infractores"
         use-chips
         lazy-rules
         map-options
-        option-label="nombre"
+        option-label="name"
         emit-value
-        option-value="usuario"
+        option-value="id"
         behavior="dialog"
       />
       <!-- Descripción denuncia -->
       <q-input
-        v-model.trim="denunciaObject.descripcion"
+        v-model.trim="denunciationObject.subject"
+        :dense="state.dense"
+        :rules="[
+          (val) => (val && val.length > 0) || 'Este campo no puede estar vacío',
+        ]"
+        clearable
+        label="Asunto"
+        lazy-rules
+      />
+      <!-- Descripción denuncia -->
+      <q-input
+        v-model.trim="denunciationObject.description"
         :dense="state.dense"
         :rules="[
           (val) => (val && val.length > 0) || 'Este campo no puede estar vacío',
         ]"
         autogrow
         clearable
-        filled
         label="Descripción"
         lazy-rules
       />
+      <div v-if="denunciationObject.id" class="q-mx-md text-dark">
+        <label>Período de actuaciones de la comisión</label>
+        <q-date landscape range v-model="denunciationObject.range" />
+      </div>
       <DevInfo>
-        {{ denunciaObject }}
+        {{ denunciationObject }}
       </DevInfo>
     </BaseForm>
     <ListPage
-      :cargando="false"
       :columns="columns"
       :rows="s.array"
       heading="Denuncias"
-      rowKey="id"
       @updateList="s.refresh()"
       @open-form="(payload) => openForm(payload)"
-      @delete-rows="(selectedRows) => deleteTuples(selectedRows)"
+      @delete-rows="(selectedRows) => s.del(selectedRows)"
+      :can-update="false"
+      :can-delete="false"
     ></ListPage>
 
     <DevInfo> Denuncias: {{ s.array }} </DevInfo>
@@ -62,12 +91,16 @@ import { ref, computed } from "vue";
 import ListPage from "components/ListPage.vue";
 import BaseForm from "components/BaseForm.vue";
 import DevInfo from "components/DevInfo.vue";
-import { useDenunciaStore } from "src/stores/denunciaStore";
+import roles from "src/composables/useRoles";
+import { useAuthStore } from "src/stores/authStore";
+import { useDenunciationStore } from "src/stores/denunciationStore";
 import { useUserStore } from "src/stores/userStore";
 import state from "src/composables/useState.js";
+const auth = useAuthStore();
 const userStore = useUserStore();
-const s = useDenunciaStore();
+const s = useDenunciationStore();
 s.refresh();
+userStore.refresh();
 // execute on component mounted
 //const queryResult = s.refresh();
 //const usersQueryResult = userStore.refresh();
@@ -83,76 +116,60 @@ const closeForm = () => {
 };
 
 // MODIFICAR (Abrir formulario con datos del objeto a modificar)
-const denunciaObject = ref({});
-const denunciaRowObject = ref({});
-
-const update = computed(
-  () => denunciaObject.value.idDenuncia || denunciaRowObject.value.id
-);
-//openForm triggered on: Nueva entrada, Modificar
+const denunciationObject = ref({});
+const update = computed(() => denunciationObject.value.id);
+//openForm is triggered on emits: Nueva entrada, Modificar
 const openForm = (obj = {}) => {
-  denunciaRowObject.value = obj;
-  denunciaObject.value = obj;
-  let denunciaDto = {};
-  if (obj.id !== undefined) {
-    denunciaDto.idDenuncia = obj.id;
-    denunciaDto.descripcion = obj.descripcion;
-    denunciaDto.acusados = obj.acusados.map((acusado) => acusado.usuario);
-    denunciaObject.value = denunciaDto;
-  }
+  denunciationObject.value = obj;
   showForm.value = true;
 };
-const createResult = {};
 //SUBMIT
 function submitFormData() {
-  // guardar(denunciaObject.value, denunciasArr, url, update.value);
-  createResult = s.create(denunciaObject.value);
+  denunciationObject.value.openDate = denunciationObject.value.range.from;
+  denunciationObject.value.endDate = denunciationObject.value.range.to;
+  s.save(denunciationObject.value);
   closeForm();
 }
 //RESET
 function resetFormData() {
-  denunciaObject.value = {};
+  denunciationObject.value = {};
 }
-
-// delete tuples by array of objects
-const deleteTuples = (selectedRows = []) =>
-  eliminar(selectedRows, denunciasArr, url);
 
 //Campos de la tabla
 const columns = ref([
   /* {name: "acusados",    required: true,    label: "Estudiantes implicados",    align: "left",    field: "acusados",    sortable: true,},*/
+
   {
-    name: "fecha",
+    name: "subject",
     required: true,
-    label: "Fecha",
+    label: "Asunto",
     align: "left",
-    field: "fecha",
+    field: "subject",
     sortable: true,
   },
   {
-    name: "descripcion",
-    required: true,
-    label: "Descripción",
-    align: "left",
-    field: "descripcion",
-    sortable: true,
-  },
-  {
-    name: "denunciante",
+    name: "accuser",
     required: true,
     label: "Denunciante",
     align: "left",
-    field: "denunciante",
+    field: (d) => d.accuser.name,
     sortable: true,
   },
   {
-    name: "procesada",
+    name: "date",
     required: true,
-    label: "Procesada",
+    label: "Fecha",
     align: "left",
-    field: "procesada",
+    field: "date",
     sortable: true,
-    format: (procesada) => (procesada ? "Sí" : "No"),
+  },
+  {
+    name: "status",
+    required: true,
+    label: "Estado",
+    align: "left",
+    field: "status",
+    sortable: true,
   },
 ]);
 </script>

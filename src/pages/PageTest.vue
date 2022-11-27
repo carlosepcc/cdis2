@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import state from "composables/useState";
 import BaseForm from "src/components/BaseForm.vue";
-import { useDenunciaStore } from "src/stores/denunciaStore";
-const denunciaStore = useDenunciaStore();
-const denuncias = denunciaStore.array;
+import { useDenunciationStore } from "src/stores/denunciationStore";\
+const denunciationStore = useDenunciationStore();
 const declaracionObject = ref({});
 const showForms = true;
 </script>

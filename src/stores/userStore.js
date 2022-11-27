@@ -1,11 +1,11 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { useApiStore } from "src/stores/apiStore.js";
-import { useRolStore } from "./rolStore";
+import { useRoleStore } from "./roleStore";
 export const useUserStore = defineStore("user", () => {
   //COMPOSITING STORES
   const apiStore = useApiStore();
-  const rolStore = useRolStore();
+  const roleStore = useRoleStore();
   const url = apiStore.urls.user;
   const array = ref([]);
   const mockArray = [

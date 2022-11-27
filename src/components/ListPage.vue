@@ -1,6 +1,6 @@
 <template>
   <q-table
-    :loading="cargando"
+    :loading="loading"
     v-model:selected="selected"
     :class="tableClass"
     :columns="columns"
@@ -28,7 +28,7 @@
         <q-btn
           flat
           icon="refresh"
-          :loading="cargando"
+          :loading="loading"
           title="Actualizar datos"
           @click="$emit('updateList')"
         />
@@ -142,8 +142,10 @@
     </template>
     <template v-slot:header="props">
       <q-tr :props="props">
-        <q-th class="actions-column">
-          <template v-if="!canDelete"> Acciones </template>
+        <q-th v-if="canDelete || canUpdate || printable" class="actions-column">
+          <template v-if="!canDelete">
+            <span class="q-px-sm">Acciones</span>
+          </template>
           <template v-else>
             <!--🗑️ ELIMINAR SELECCIÓN-->
             <q-btn
@@ -173,7 +175,11 @@
         title="Haga click para ver o modificar esta entrada"
         @click="$emit('openForm', props.row)"
       >
-        <q-td auto-width class="actions-column">
+        <q-td
+          auto-width
+          v-if="canDelete || canUpdate || printable"
+          class="actions-column"
+        >
           <q-checkbox
             v-if="canDelete"
             v-model="props.selected"
@@ -192,7 +198,19 @@
             @click.stop="$emit('openForm', props.row)"
           />
 
-          <!-- 🗑-->
+          <!-- 🖨 Print -->
+          <q-btn
+            v-if="printable"
+            title="Imprimir fila"
+            spread
+            flat
+            icon="r_print"
+            size="sm"
+            text-color="secondary"
+            @click.stop="$emit('print', props.row)"
+          />
+
+          <!-- 🗑 DELETE-->
           <q-btn
             v-if="canDelete"
             title="Eliminar"
@@ -201,18 +219,6 @@
             size="sm"
             text-color="negative"
             @click.stop="emitDelete(props.row)"
-          />
-          <!-- Print-->
-          <q-btn
-            v-if="props.printable"
-            title="Imprimir"
-            spread
-            flat
-            icon="print"
-            size="sm"
-            text-color="secondary"
-            @click.stop=""
-            to="/print"
           />
         </q-td>
         <q-td
@@ -243,7 +249,18 @@
               dense
             />
             <q-space />
-            <!-- 📝-->
+            <!-- 🖨 PRINT -->
+            <q-btn
+              v-if="props.printable"
+              :dense="isTableDense"
+              flat
+              icon="r_print"
+              round
+              size="sm"
+              text-color="secondary"
+              @click.stop="$emit('print', props.row)"
+            />
+            <!-- 📝 EDIT -->
             <q-btn
               v-if="canUpdate"
               :dense="isTableDense"
@@ -255,7 +272,7 @@
               @click.stop="$emit('openForm', props.row)"
             />
 
-            <!-- 🗑-->
+            <!-- 🗑 DELETE -->
             <q-btn
               v-if="canDelete"
               :dense="isTableDense"
@@ -319,17 +336,17 @@ const tableClass = `overflow-scroll bg-solid ${
 }`;
 
 const props = defineProps({
-  heading: String,
   rows: Array,
   columns: Array,
+  heading: { type: String, default: "Lista" },
   printable: { type: Boolean, default: false },
   canCreate: { type: Boolean, default: true },
   canDelete: { type: Boolean, default: true },
   canUpdate: { type: Boolean, default: true },
-  cargando: { type: Boolean, default: false },
+  loading: { type: Boolean, default: false },
   rowKey: { type: String, default: "id" },
 });
-const emit = defineEmits(["openForm", "deleteRows", "updateList"]);
+const emit = defineEmits(["openForm", "deleteRows", "updateList", "print"]);
 const emitDelete = (rowObject = null) => {
   selected.value.push(rowObject);
   console.log(selected);

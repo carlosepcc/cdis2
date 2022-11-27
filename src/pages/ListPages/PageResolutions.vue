@@ -132,8 +132,7 @@ import { computed, ref } from "vue";
 import ListPage from "components/ListPage.vue";
 import BaseForm from "components/BaseForm.vue";
 import DevInfo from "components/DevInfo.vue";
-import listar, { eliminar, guardar } from "src/composables/useAPI.js";
-import state, { pathToCurso } from "src/composables/useState.js";
+import state from "src/composables/useState.js";
 import { useUserStore } from "src/stores/userStore";
 import { useResolutionStore } from "src/stores/resolutionStore";
 import { useAuthStore } from "src/stores/authStore";
@@ -145,8 +144,6 @@ userSt.refresh();
 
 // MODIFICAR (Abrir formulario con datos del objeto a modificar)
 const resolutionObject = ref({});
-const resolutionRowObject = ref({});
-const resolutionExportObject = ref({});
 
 const update = computed(() => resolutionObject.value.id !== undefined);
 //openForm triggered on: Nueva entrada, Modificar
@@ -158,7 +155,6 @@ function openForm(
     commissions: [{}, {}],
   }
 ) {
-  resolutionRowObject.value = obj;
   resolutionObject.value = obj;
   showForm.value = true;
 }

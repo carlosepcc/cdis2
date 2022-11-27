@@ -10,20 +10,26 @@
       :isModifying="true"
     >
       <q-input
-        :readonly="isUpdate"
         filled
-        label="Usuario"
-        v-model="userObject.usuario"
+        label="Nombre"
+        v-model="userObject.name"
         :dense="state.dense"
         :rules="[val || 'Por favor, escriba un nombre de usuario válido']"
         lazy-rules
-        title="No se puede modificar el nombre de usuario una vez que se ha guardado en"
+      />
+      <q-input
+        filled
+        label="Usuario"
+        v-model="userObject.user"
+        :dense="state.dense"
+        :rules="[val || 'Por favor, escriba un nombre de usuario válido']"
+        lazy-rules
       />
       <q-select
         label="Rol"
-        v-model="userObject.rol"
+        v-model="userObject.role"
         :dense="state.dense"
-        :options="rolStore.arrayUi"
+        :options="roleStore.array"
         :rules="[val || 'Por favor, seleccione un opción']"
         filled
         map-options
@@ -40,7 +46,7 @@
         lazy-rules
       />
       <q-select
-        v-model="userObject.categoriacientifica"
+        v-model="userObject.scientificCategory"
         :dense="state.dense"
         :options="s.scientificCategories"
         :rules="[val || 'Por favor, seleccione una opción']"
@@ -75,6 +81,8 @@ import BaseForm from "components/BaseForm.vue";
 import DevInfo from "components/DevInfo.vue";
 import state from "src/composables/useState.js";
 import { useUserStore } from "src/stores/userStore";
+import { useRoleStore } from "src/stores/roleStore";
+const roleStore = useRoleStore();
 const s = useUserStore();
 s.refresh();
 
