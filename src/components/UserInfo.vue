@@ -7,7 +7,7 @@ let u = auth.loggedUserUi;
 </script>
 <template>
   <q-item
-    v-if="auth.loggedUser"
+    v-if="auth.isLogged"
     clickable
     v-ripple
     class="text-white q-py-none absolute-right"
@@ -19,11 +19,11 @@ let u = auth.loggedUserUi;
     <q-item-section>
       <q-item-label class="text-yellow-1 text-bold">
         <span class>
-          {{ u.name }}
+          {{ u.username }}
         </span>
       </q-item-label>
       <q-item-label class="text-orange-1 text-bold" caption>
-        {{ u.position ?? u.role }}
+        {{ u.position && u.position != "" ? u.position : u.role }}
       </q-item-label>
     </q-item-section>
     <!--    AVATAR-->

@@ -9,6 +9,12 @@ export const useDenunciationStore = defineStore("denunciation", () => {
   const url = urls.denunciation;
   const array = ref([]);
   const mockArray = [];
+  const statuses = {
+    pending: "Pendiente",
+    active: "Activa",
+    closed: "Cerrada",
+    archived: "Archivada",
+  };
 
   // Action functions
 
@@ -22,6 +28,11 @@ export const useDenunciationStore = defineStore("denunciation", () => {
   function save(objectToSave, isUpdate = objectToSave.id) {
     return apiStore.save(objectToSave, url, isUpdate, array);
   }
+  function archive(object) {
+    object.commission = null;
+    object.status = statuses.archived;
+    return apiStore.save(object, url, true, array);
+  }
 
   //// DELETE
   function del(itemsToDelete) {
@@ -34,5 +45,7 @@ export const useDenunciationStore = defineStore("denunciation", () => {
     refresh,
     save,
     del,
+    statuses,
+    archive,
   };
 });

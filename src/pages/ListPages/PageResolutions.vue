@@ -158,6 +158,7 @@ function openForm(
   }
 ) {
   resolutionObject.value = obj;
+  userStore.refresh();
   showForm.value = true;
 }
 

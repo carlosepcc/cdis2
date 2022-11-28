@@ -1,6 +1,6 @@
 <template>
   <q-card
-    v-if="auth.loggedUserUi?.role === r.adm"
+    v-if="auth.loggedUserUi?.role === r.su"
     bordered
     flat
     class="q-my-sm opaque"

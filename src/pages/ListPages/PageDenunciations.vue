@@ -3,19 +3,40 @@
     <BaseForm
       v-model="showForm"
       v-show="showForm"
-      :formTitle="`Denuncia ${denunciationObject.idDenuncia ?? ''}`"
+      :formTitle="`Denuncia ${formObj.idDenuncia ?? ''}`"
       @submit="submitFormData"
       @reset="resetFormData"
       @close-form="closeForm"
       :isModifying="update"
     >
+      <template v-if="formObj.status">
+        <div>Esta denuncia está {{ formObj.status.toLowerCase() }}</div>
+        <q-btn
+          v-if="auth.isDecano && !isClosed"
+          no-caps
+          color="negative"
+          flat
+          :label="
+            isArchived
+              ? 'Desarchivar'
+              : isPending
+              ? 'Denegar y archivar'
+              : 'Desactivar y Archivar'
+          "
+          :icon="isArchived ? 'unarchive' : 'archive'"
+          :title="
+            (isActive ? 'Desactivar' : isPending ? 'Denegar' : 'Desarchivar') +
+            ' la denuncia ' +
+            formObj.status.toLowerCase()
+          "
+          @click="toggleArchive()"
+        />
+      </template>
+      <!-- COMMISSION -->
       <q-select
-        v-if="denunciationObject.id"
-        :disable="
-          auth.loggedUserUi.role != roles.dec &&
-          auth.loggedUserUi.role != roles.adm
-        "
-        v-model="denunciationObject.commission"
+        v-if="formObj.id"
+        :disable="auth.isDecano && auth.isAdministrator"
+        v-model="formObj.commission"
         :dense="state.dense"
         :options="commissionStore.array"
         :rules="[val || 'Por favor, seleccione los infractores']"
@@ -24,17 +45,20 @@
         emit-value
         :option-label="(c) => c.president?.name + ', ' + c.secretary?.name"
         option-value="id"
-        label="Comisión Disciplinaria"
-        use-chips
+        label="Asignar Comisión Disciplinaria"
         lazy-rules
-      />
+      >
+        <template v-slot:prepend>
+          <q-icon name="shield" @click.stop.prevent /> </template
+      ></q-select>
+
+      <!-- END DATE -->
       <q-input
-        v-if="denunciationObject.commission"
+        v-if="formObj.commission"
         label="Fin de actuaciones de la comisión"
         filled
-        v-model="denunciationObject.endDate"
-        mask="date"
-        :rules="['date']"
+        v-model="formObj.endDate"
+        :rules="[]"
       >
         <template v-slot:append>
           <q-icon name="event" class="cursor-pointer">
@@ -43,7 +67,7 @@
               transition-show="scale"
               transition-hide="scale"
             >
-              <q-date v-model="denunciationObject.endDate">
+              <q-date v-model="formObj.endDate" mask="YYYY-MM-DD">
                 <div class="row items-center justify-end">
                   <q-btn v-close-popup label="Close" color="primary" flat />
                 </div>
@@ -52,21 +76,23 @@
           </q-icon>
         </template>
       </q-input>
-      <q-select
-        v-if="denunciationObject.id"
+
+      <!-- STATUS -->
+      <!-- <q-select
+        v-if="formObj.id"
         readonly
         borderless
         :disable="
           auth.loggedUserUi.role != roles.dec &&
-          auth.loggedUserUi.role != roles.adm
+          auth.isAdministrator
         "
-        v-model="denunciationObject.status"
+        v-model="formObj.status"
         :dense="state.dense"
         :options="['Pendiente', 'Activa', 'Cerrada', 'Archivada']"
         :rules="[val || 'Por favor, seleccione un estado']"
         label="Estado"
         lazy-rules
-      />
+      /> -->
 
       <!--TODO @filter="filterFn" use-input -->
       <!-- INFRACTORES -->
@@ -74,7 +100,7 @@
         :readonly="update"
         :filled="!update"
         :borderless="update"
-        v-model="denunciationObject.infractors"
+        v-model="formObj.infractors"
         multiple
         :dense="state.dense"
         :options="userStore.students"
@@ -91,7 +117,7 @@
       <!-- Asunto denuncia -->
       <q-input
         :readonly="update"
-        v-model.trim="denunciationObject.subject"
+        v-model.trim="formObj.subject"
         :dense="state.dense"
         :rules="[
           (val) => (val && val.length > 0) || 'Este campo no puede estar vacío',
@@ -103,7 +129,7 @@
       <!-- Descripción denuncia -->
       <q-input
         :readonly="update"
-        v-model.trim="denunciationObject.description"
+        v-model.trim="formObj.description"
         :dense="state.dense"
         :rules="[
           (val) => (val && val.length > 0) || 'Este campo no puede estar vacío',
@@ -114,9 +140,9 @@
         lazy-rules
       />
       <!-- VOCALS -->
-      <template v-if="denunciationObject.id">
+      <template v-if="formObj.id">
         <q-card
-          v-for="(vocal, i) in denunciationObject.vocals"
+          v-for="(vocal, i) in formObj.vocals"
           :key="i"
           flat
           bordered
@@ -135,7 +161,7 @@
                   title="Descartar comisión"
                   flat
                   icon="r_close"
-                  @click="denunciationObject.vocals.splice(i, 1)"
+                  @click="formObj.vocals.splice(i, 1)"
                 />
               </div>
             </div>
@@ -175,13 +201,13 @@
           spread
           no-caps
           class="full-width"
-          :label="`Vocal ${denunciationObject.vocals.length + 1}`"
-          @click="denunciationObject.vocals.push({})"
+          :label="`Vocal ${formObj.vocals.length + 1}`"
+          @click="formObj.vocals.push({})"
         />
       </template>
 
       <DevInfo>
-        {{ denunciationObject }}
+        {{ formObj }}
       </DevInfo>
     </BaseForm>
     <ListPage
@@ -196,7 +222,7 @@
     ></ListPage>
 
     <DevInfo>
-      denunciationObject : {{ denunciationObject }}<br />
+      formObj : {{ formObj }}<br />
       Denuncias: {{ s.array }}
     </DevInfo>
     <DevInfo> commissions: {{ commissionStore.array }} </DevInfo>
@@ -209,10 +235,13 @@ import BaseForm from "components/BaseForm.vue";
 import DevInfo from "components/DevInfo.vue";
 import roles from "src/composables/useRoles";
 import state from "src/composables/useState.js";
+import { confirm } from "src/composables/useUi";
 import { useAuthStore } from "src/stores/authStore";
+import { useQuasar } from "quasar";
 import { useDenunciationStore } from "src/stores/denunciationStore";
 import { useUserStore } from "src/stores/userStore";
 import { useCommissionStore } from "src/stores/commissionStore";
+const $q = useQuasar();
 const commissionStore = useCommissionStore();
 const auth = useAuthStore();
 const userStore = useUserStore();
@@ -230,39 +259,74 @@ const showForm = ref(false);
 
 //closeForm triggered on: Cancel
 const closeForm = () => {
+  resetFormData();
   showForm.value = false;
   s.refresh();
 };
 
 // MODIFICAR (Abrir formulario con datos del objeto a modificar)
-const denunciationObject = ref({ vocals: [{}] });
-const update = computed(() => (denunciationObject.value.id ? true : false));
+const formObj = ref({ vocals: [{}] });
+const update = computed(() => (formObj.value.id ? true : false));
 
 //openForm is triggered on emits: Nueva entrada, Modificar
 const openForm = (obj) => {
-  denunciationObject.value = obj ?? { vocals: [{}] };
+  //Object.assign(formObj.value, obj ?? { vocals: [{}] });
+  formObj.value = obj ?? { vocals: [{}] };
+  userStore.refresh();
+  commissionStore.refresh();
   showForm.value = true;
 };
 
 //SUBMIT
 function submitFormData() {
-  console.info("submitFormData", denunciationObject.value);
-  s.save(denunciationObject.value);
+  console.info("submitFormData", formObj.value);
+  console.info("denuncia enviada", formObj.value);
+  console.info(
+    "formObj.value.id && formObj.value.commission != null",
+    formObj.value.id && formObj.value.commission != null
+  );
+  if (formObj.value.id && formObj.value.commission != null) {
+    console.log(`setting status to ${s.statuses.active}`);
+    formObj.value.status = s.statuses.active;
+  }
+
+  formObj.value.status = s.statuses.active;
+  s.save(formObj.value);
+  closeForm();
+}
+
+function toggleArchive() {
+  confirm(() => {
+    formObj.value.status =
+      formObj.value.status == s.statuses.archived
+        ? s.statuses.pending
+        : s.statuses.archived;
+    s.save(formObj.value);
+    closeForm();
+  });
+}
+
+function archive() {
+  s.archive(formObj.value);
   closeForm();
 }
 //RESET
 function resetFormData() {
-  denunciationObject.value = {};
+  formObj.value = {};
 }
+const isArchived = computed(() => formObj.value.status == s.statuses.archived);
+const isPending = computed(() => formObj.value.status == s.statuses.pending);
+const isActive = computed(() => formObj.value.status == s.statuses.active);
+const isClosed = computed(() => formObj.value.status == s.statuses.closed);
 
 const userIsAccuser = computed(
-  () => denunciationObject.value.accuser?.id == auth.loggedUser.id
+  () => formObj.value.accuser?.id == auth.loggedUser.id
 );
 const userIsPresident = computed(
-  () => denunciationObject.value.commission?.id == auth.loggedUser.id
+  () => formObj.value.commission?.id == auth.loggedUser.id
 );
 const userIsInfractor = computed(() =>
-  denunciationObject.value.infractors?.some(
+  formObj.value.infractors?.some(
     (infractor) => infractor.id == auth.loggedUser.id
   )
 );

@@ -41,7 +41,7 @@
           label="Título"
           :disable="
             auth.loggedUserUi.role != roles.pre &&
-            auth.loggedUserUi.role != roles.adm
+            auth.loggedUserUi.role != roles.su
           "
           filled
           :dense="state.dense"

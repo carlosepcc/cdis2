@@ -1,7 +1,8 @@
 const roles = {
   dec: "DECANO",
-  adm: "ADMIN",
-  user: "Usuario",
+  su: "ADMIN",
+  user: "USUARIO",
+  adm: "ADMINISTRADOR",
 };
 export const positions = {
   dec: "Decano",

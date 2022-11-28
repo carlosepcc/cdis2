@@ -6,6 +6,7 @@ import { api } from "boot/axios";
 import { notifyError } from "src/composables/useAPI.js";
 import { useRouter } from "vue-router";
 import { urls } from "src/composables/useAPI.js";
+import roles from "src/composables/useRoles";
 export const useAuthStore = defineStore("auth", () => {
   //COMPOSITING STORES
   const router = useRouter();
@@ -22,7 +23,7 @@ export const useAuthStore = defineStore("auth", () => {
       position: loggedUser.value?.position,
       username: loggedUser.value?.username,
       name: loggedUser.value?.name,
-      thumbnail: loggedUser.value?.name[0].toUpperCase(), //thumbnails supports html
+      thumbnail: loggedUser.value?.username[0].toUpperCase(), //thumbnails supports html
       role: loggedUser.value?.roles.at(-1) ?? "Usuario",
       roles: loggedUser.value?.roles,
       roleThumbnail: loggedUser.value?.roles.at(-1)
@@ -33,6 +34,15 @@ export const useAuthStore = defineStore("auth", () => {
   const isAdministrator = computed(
     () => loggedUser.value?.position == "Administrador"
   );
+  const isLogged = computed(
+    () => loggedUser.value != null && loggedUser.value != undefined
+  );
+  const isSu = computed(() => loggedUser.value?.role == roles.su);
+  const isUser = computed(() => loggedUser.value?.position == "Usuario");
+  const isTeacher = computed(() => loggedUser.value?.position == "Profesor");
+  const isStudent = computed(() => loggedUser.value?.position == "Estudiante");
+  const isDecano = computed(() => loggedUser.value?.position == "Decano");
+  const isWorker = computed(() => loggedUser.value?.position == "Trabajador");
 
   //ACTIONS FUNCTIONS
   function removeLoggedUser() {
@@ -204,6 +214,7 @@ export const useAuthStore = defineStore("auth", () => {
       });
   }*/
   return {
+    isLogged,
     loggedUser,
     loggedUserUi,
     removeLoggedUser,
@@ -213,5 +224,9 @@ export const useAuthStore = defineStore("auth", () => {
     checkLocalAuthorization,
     mockUser,
     offlineTesting,
+    isAdministrator,
+    isUser,
+    isStudent,
+    isDecano,
   };
 });
