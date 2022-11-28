@@ -63,7 +63,7 @@
               :readonly="update"
               v-model="c.president"
               :dense="state.dense"
-              :options="userSt.array"
+              :options="userStore.teachers"
               :rules="[val || 'Por favor, seleccione un presidente']"
               label="Presidente"
               lazy-rules
@@ -77,7 +77,7 @@
               :readonly="update"
               v-model="c.secretary"
               :dense="state.dense"
-              :options="userSt.array"
+              :options="userStore.teachers"
               :rules="[val || 'Por favor, seleccione un secretario']"
               lazy-rules
               map-options
@@ -110,6 +110,7 @@
         </DevInfo>
       </template>
     </BaseForm>
+    <!-- TODO:Print -->
     <ListPage
       :columns="resolutionFields"
       :rows="s.array"
@@ -119,6 +120,7 @@
       @open-form="(payload) => openForm(payload)"
       @delete-rows="(selectedRows) => s.del(selectedRows)"
       :canUpdate="false"
+      printable
     ></ListPage>
     <DevInfo>
       resolutionObject: {{ resolutionObject }}<br />
@@ -137,10 +139,10 @@ import { useUserStore } from "src/stores/userStore";
 import { useResolutionStore } from "src/stores/resolutionStore";
 import { useAuthStore } from "src/stores/authStore";
 const auth = useAuthStore();
-const userSt = useUserStore();
+const userStore = useUserStore();
 const s = useResolutionStore();
 s.refresh();
-userSt.refresh();
+userStore.refresh();
 
 // MODIFICAR (Abrir formulario con datos del objeto a modificar)
 const resolutionObject = ref({});
@@ -186,9 +188,15 @@ const resolutionFields = ref([
   {
     name: "commissions",
     required: true,
-    label: "commissions",
+    label: "Comisiones",
     align: "left",
-    field: (r) => r.commissions.map((c) => c.president.name),
+    field: (r) => {
+      let string = "Presidentes: ";
+      r.commissions.map((c) => {
+        string += c.president.name + ", ";
+      });
+      return string;
+    },
     sortable: true,
   },
 ]);

@@ -88,7 +88,7 @@ export const useApiStore = defineStore("api", () => {
       });
   }
 
-  function del(itemsToDelete = [], url = urls.user, refArray) {
+  function del(itemsToDelete, url = urls.user, refArray) {
     console.info(
       `del function triggered for ${url}, items to delete: `,
       itemsToDelete
@@ -119,6 +119,7 @@ export const useApiStore = defineStore("api", () => {
         // idsUrl.pop(); */
         let idsArr = [];
         itemsToDelete.value.forEach((obj) => idsArr.push(obj.id)); //Se llena el arreglo de ids con los ids de los objetos del arreglo de objetos
+        itemsToDelete.value = [];
         //REQUEST TO SERVER
         api({
           method: "delete",

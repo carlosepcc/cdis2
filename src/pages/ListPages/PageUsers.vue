@@ -10,7 +10,8 @@
       :isModifying="true"
     >
       <q-input
-        filled
+        readonly
+        borderless
         label="Nombre"
         v-model="userObject.name"
         :dense="state.dense"
@@ -18,40 +19,43 @@
         lazy-rules
       />
       <q-input
-        filled
+        readonly
+        borderless
         label="Usuario"
-        v-model="userObject.user"
+        v-model="userObject.username"
         :dense="state.dense"
         :rules="[val || 'Por favor, escriba un nombre de usuario válido']"
         lazy-rules
       />
       <q-select
-        label="Rol"
-        v-model="userObject.role"
-        :dense="state.dense"
-        :options="roleStore.array"
-        :rules="[val || 'Por favor, seleccione un opción']"
-        filled
-        map-options
-        emit-value
-        lazy-rules
-      />
-      <q-select
+        readonly
+        borderless
         label="Cargo"
         v-model="userObject.position"
         :dense="state.dense"
-        :options="s.cargos"
+        :options="s.positions"
         :rules="[val || 'Por favor, seleccione una opción']"
-        filled
         lazy-rules
       />
       <q-select
+        readonly
+        borderless
         v-model="userObject.scientificCategory"
         :dense="state.dense"
         :options="s.scientificCategories"
         :rules="[val || 'Por favor, seleccione una opción']"
-        filled
         label="Categoría científica"
+        lazy-rules
+      />
+      <q-select
+        :readonly="!auth.isAdmnistrator"
+        :borderless="!auth.isAdmnistrator"
+        label="Rol"
+        v-model="userObject.roles"
+        :dense="state.dense"
+        :options="roles"
+        :rules="[val || 'Por favor, seleccione un rol']"
+        filled
         lazy-rules
       />
 
@@ -61,17 +65,14 @@
       :columns="columns"
       :rows="s.array"
       heading="Usuarios"
-      rowKey="usuario"
       @updateList="s.refresh"
       @open-form="(payload) => openForm(payload)"
-      @delete-rows="(selectedRows) => deleteTuples(selectedRows)"
+      @delete-rows="(selectedRows) => s.del(selectedRows)"
       :canCreate="true"
       :canDelete="true"
     >
     </ListPage>
-    <DevInfo>
-      {{ s.array }}
-    </DevInfo>
+    <DevInfo> Usuarios: {{ s.array }} </DevInfo>
   </q-page>
 </template>
 <script setup>
@@ -81,8 +82,9 @@ import BaseForm from "components/BaseForm.vue";
 import DevInfo from "components/DevInfo.vue";
 import state from "src/composables/useState.js";
 import { useUserStore } from "src/stores/userStore";
-import { useRoleStore } from "src/stores/roleStore";
-const roleStore = useRoleStore();
+import { useAuthStore } from "src/stores/authStore";
+import roles from "src/composables/useRoles";
+const auth = useAuthStore();
 const s = useUserStore();
 s.refresh();
 
@@ -150,7 +152,8 @@ const columns = ref([
     label: "Rol",
     name: "role",
     align: "center",
-    field: (u) => u.roles[1],
+    field: (u) => u.roles.at(-1) ?? "USUARIO",
+    //format: (r) => r.toUpperCase(),
     sortable: true,
   },
 ]);

@@ -15,23 +15,70 @@
           auth.loggedUserUi.role != roles.dec &&
           auth.loggedUserUi.role != roles.adm
         "
-        v-model="denunciationObject.status"
+        v-model="denunciationObject.commission"
         :dense="state.dense"
-        :options="['Pendiente', 'Activa', 'Cerrada', 'Archivada']"
+        :options="commissionStore.array"
         :rules="[val || 'Por favor, seleccione los infractores']"
         filled
-        label="Estado"
+        map-options
+        emit-value
+        :option-label="(c) => c.president?.name + ', ' + c.secretary?.name"
+        option-value="id"
+        label="Comisión Disciplinaria"
         use-chips
         lazy-rules
       />
-      <!--TODO @filter="filterFn" use-input -->
+      <q-input
+        v-if="denunciationObject.commission"
+        label="Fin de actuaciones de la comisión"
+        filled
+        v-model="denunciationObject.endDate"
+        mask="date"
+        :rules="['date']"
+      >
+        <template v-slot:append>
+          <q-icon name="event" class="cursor-pointer">
+            <q-popup-proxy
+              cover
+              transition-show="scale"
+              transition-hide="scale"
+            >
+              <q-date v-model="denunciationObject.endDate">
+                <div class="row items-center justify-end">
+                  <q-btn v-close-popup label="Close" color="primary" flat />
+                </div>
+              </q-date>
+            </q-popup-proxy>
+          </q-icon>
+        </template>
+      </q-input>
       <q-select
+        v-if="denunciationObject.id"
+        readonly
+        borderless
+        :disable="
+          auth.loggedUserUi.role != roles.dec &&
+          auth.loggedUserUi.role != roles.adm
+        "
+        v-model="denunciationObject.status"
+        :dense="state.dense"
+        :options="['Pendiente', 'Activa', 'Cerrada', 'Archivada']"
+        :rules="[val || 'Por favor, seleccione un estado']"
+        label="Estado"
+        lazy-rules
+      />
+
+      <!--TODO @filter="filterFn" use-input -->
+      <!-- INFRACTORES -->
+      <q-select
+        :readonly="update"
+        :filled="!update"
+        :borderless="update"
         v-model="denunciationObject.infractors"
         multiple
         :dense="state.dense"
-        :options="userStore.array"
+        :options="userStore.students"
         :rules="[val || 'Por favor, seleccione los infractores']"
-        filled
         label="Infractores"
         use-chips
         lazy-rules
@@ -41,8 +88,9 @@
         option-value="id"
         behavior="dialog"
       />
-      <!-- Descripción denuncia -->
+      <!-- Asunto denuncia -->
       <q-input
+        :readonly="update"
         v-model.trim="denunciationObject.subject"
         :dense="state.dense"
         :rules="[
@@ -54,6 +102,7 @@
       />
       <!-- Descripción denuncia -->
       <q-input
+        :readonly="update"
         v-model.trim="denunciationObject.description"
         :dense="state.dense"
         :rules="[
@@ -64,10 +113,73 @@
         label="Descripción"
         lazy-rules
       />
-      <div v-if="denunciationObject.id" class="q-mx-md text-dark">
-        <label>Período de actuaciones de la comisión</label>
-        <q-date landscape range v-model="denunciationObject.range" />
-      </div>
+      <!-- VOCALS -->
+      <template v-if="denunciationObject.id">
+        <q-card
+          v-for="(vocal, i) in denunciationObject.vocals"
+          :key="i"
+          flat
+          bordered
+          class="my-card q-mb-sm"
+        >
+          <q-card-section class="q-pa-xs q-pl-sm q-pr-none">
+            <div class="row items-center no-wrap">
+              <div class="col">
+                <div class="text-light">Vocal {{ i + 1 }}</div>
+              </div>
+
+              <div class="col-auto" v-if="!update">
+                <q-btn
+                  color="negative"
+                  size="sm"
+                  title="Descartar comisión"
+                  flat
+                  icon="r_close"
+                  @click="denunciationObject.vocals.splice(i, 1)"
+                />
+              </div>
+            </div>
+          </q-card-section>
+          <q-separator />
+          <q-card-section>
+            <q-select
+              :readonly="!auth.loggedUserUi.role"
+              v-model="vocal.id"
+              :dense="state.dense"
+              :options="userStore.array"
+              :rules="[val || 'Por favor, seleccione un usuario']"
+              label="Usuario"
+              filled
+              lazy-rules
+              map-options
+              option-label="name"
+              emit-value
+              option-value="id"
+            />
+            <q-input
+              label="Actúa como"
+              :readonly="!auth.loggedUserUi.role"
+              filled
+              :dense="state.dense"
+              v-model.trim="vocal.role"
+              :rules="[val || 'Por favor, escriba un rol']"
+            />
+          </q-card-section>
+        </q-card>
+        <q-btn
+          v-show="!update"
+          flat
+          size="xl"
+          color="grey"
+          icon="r_add"
+          spread
+          no-caps
+          class="full-width"
+          :label="`Vocal ${denunciationObject.vocals.length + 1}`"
+          @click="denunciationObject.vocals.push({})"
+        />
+      </template>
+
       <DevInfo>
         {{ denunciationObject }}
       </DevInfo>
@@ -83,7 +195,11 @@
       :can-delete="false"
     ></ListPage>
 
-    <DevInfo> Denuncias: {{ s.array }} </DevInfo>
+    <DevInfo>
+      denunciationObject : {{ denunciationObject }}<br />
+      Denuncias: {{ s.array }}
+    </DevInfo>
+    <DevInfo> commissions: {{ commissionStore.array }} </DevInfo>
   </q-page>
 </template>
 <script setup>
@@ -92,15 +208,18 @@ import ListPage from "components/ListPage.vue";
 import BaseForm from "components/BaseForm.vue";
 import DevInfo from "components/DevInfo.vue";
 import roles from "src/composables/useRoles";
+import state from "src/composables/useState.js";
 import { useAuthStore } from "src/stores/authStore";
 import { useDenunciationStore } from "src/stores/denunciationStore";
 import { useUserStore } from "src/stores/userStore";
-import state from "src/composables/useState.js";
+import { useCommissionStore } from "src/stores/commissionStore";
+const commissionStore = useCommissionStore();
 const auth = useAuthStore();
 const userStore = useUserStore();
 const s = useDenunciationStore();
 s.refresh();
 userStore.refresh();
+commissionStore.refresh();
 // execute on component mounted
 //const queryResult = s.refresh();
 //const usersQueryResult = userStore.refresh();
@@ -116,17 +235,18 @@ const closeForm = () => {
 };
 
 // MODIFICAR (Abrir formulario con datos del objeto a modificar)
-const denunciationObject = ref({});
-const update = computed(() => denunciationObject.value.id);
+const denunciationObject = ref({ vocals: [{}] });
+const update = computed(() => (denunciationObject.value.id ? true : false));
+
 //openForm is triggered on emits: Nueva entrada, Modificar
-const openForm = (obj = {}) => {
-  denunciationObject.value = obj;
+const openForm = (obj) => {
+  denunciationObject.value = obj ?? { vocals: [{}] };
   showForm.value = true;
 };
+
 //SUBMIT
 function submitFormData() {
-  denunciationObject.value.openDate = denunciationObject.value.range.from;
-  denunciationObject.value.endDate = denunciationObject.value.range.to;
+  console.info("submitFormData", denunciationObject.value);
   s.save(denunciationObject.value);
   closeForm();
 }
@@ -135,6 +255,17 @@ function resetFormData() {
   denunciationObject.value = {};
 }
 
+const userIsAccuser = computed(
+  () => denunciationObject.value.accuser?.id == auth.loggedUser.id
+);
+const userIsPresident = computed(
+  () => denunciationObject.value.commission?.id == auth.loggedUser.id
+);
+const userIsInfractor = computed(() =>
+  denunciationObject.value.infractors?.some(
+    (infractor) => infractor.id == auth.loggedUser.id
+  )
+);
 //Campos de la tabla
 const columns = ref([
   /* {name: "acusados",    required: true,    label: "Estudiantes implicados",    align: "left",    field: "acusados",    sortable: true,},*/

@@ -2,21 +2,13 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { useApiStore } from "src/stores/apiStore.js";
 import { useRoleStore } from "./roleStore";
+import { positions } from "src/composables/useRoles";
 export const useUserStore = defineStore("user", () => {
   //COMPOSITING STORES
   const apiStore = useApiStore();
   const roleStore = useRoleStore();
   const url = apiStore.urls.user;
   const array = ref([]);
-  const mockArray = [
-    {
-      user: "denunciauno",
-      name: "Denunciante Uno",
-      roles: ["USER", "ADMIN"],
-      cargo: "Cargouno",
-      permisos: "ROLE_C_DENUNCIA",
-    },
-  ];
   //GETTERS
   const arrayUi = computed(() => {
     return array;
@@ -54,14 +46,37 @@ export const useUserStore = defineStore("user", () => {
   function del(itemsToDelete) {
     apiStore.del(itemsToDelete, url);
   }
+  function getUsersByRole(role) {
+    return array.value.filter((user) => user.roles.includes(role));
+  }
+  function getUsersByPosition(position) {
+    return array.value.filter((user) => user.position === position);
+  }
+  function getUsersByScientificCategory(scientificCategory) {
+    return array.value.filter(
+      (user) => user.scientificCategory === scientificCategory
+    );
+  }
+  function getRolesByUser(user) {
+    return user.roles;
+  }
+
+  const teachers = computed(() => {
+    return getUsersByPosition(positions.pro);
+  });
+  const students = computed(() => {
+    return getUsersByPosition(positions.est);
+  });
+  const workers = computed(() => {
+    return getUsersByPosition(positions.tra);
+  });
 
   const scientificCategories = ref(["Dr.C", "M.Sc", "Ing", "Lic"]);
-  const genres = ref(["M", "F"]);
-  const cargos = ref(["PROFESOR", "ESTUDIANTE", "TRABAJADOR", "ADMINISTRADOR"]);
+  const genders = ref(["M", "F"]);
 
   return {
-    cargos,
-    genres,
+    positions,
+    genders,
     scientificCategories,
     arrayUi,
     array,
@@ -72,5 +87,12 @@ export const useUserStore = defineStore("user", () => {
     del,
     update,
     create,
+    getUsersByRole,
+    getUsersByPosition,
+    getUsersByScientificCategory,
+    getRolesByUser,
+    teachers,
+    students,
+    workers,
   };
 });

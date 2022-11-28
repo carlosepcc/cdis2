@@ -21,7 +21,7 @@
         <q-select
           v-model="conclusion.calificacion.text"
           :dense="state.dense"
-          :options="res.faultQualifications"
+          :options="res.qualificationLabels"
           :rules="[val || 'Por favor, seleccione una comisión']"
           filled
           lazy-rules

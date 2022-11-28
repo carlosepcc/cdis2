@@ -9,8 +9,8 @@ export const urls = {
   declaration: "declaration",
   conclusion: "conclusion",
   resolution: "resolution",
+  commission: "commission",
   login: "login",
-  case: "case",
   user: "user",
 };
 export const goToIndexJs = () => {

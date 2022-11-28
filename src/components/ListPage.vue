@@ -142,7 +142,11 @@
     </template>
     <template v-slot:header="props">
       <q-tr :props="props">
-        <q-th v-if="canDelete || canUpdate || printable" class="actions-column">
+        <q-th
+          auto-width
+          v-if="canDelete || canUpdate || printable"
+          class="actions-column"
+        >
           <template v-if="!canDelete">
             <span class="q-px-sm">Acciones</span>
           </template>
@@ -241,48 +245,53 @@
       >
         <q-card bordered :class="props.selected ? 'card-selected' : ''">
           <!-- CARD HEADER-->
-          <q-card-section class="row">
-            <q-checkbox
-              v-if="canDelete"
-              v-model="props.selected"
-              :label="props.cols[0].value"
-              dense
-            />
-            <q-space />
-            <!-- 🖨 PRINT -->
-            <q-btn
-              v-if="props.printable"
-              :dense="isTableDense"
-              flat
-              icon="r_print"
-              round
-              size="sm"
-              text-color="secondary"
-              @click.stop="$emit('print', props.row)"
-            />
-            <!-- 📝 EDIT -->
-            <q-btn
-              v-if="canUpdate"
-              :dense="isTableDense"
-              flat
-              icon="r_edit"
-              round
-              size="sm"
-              text-color="accent"
-              @click.stop="$emit('openForm', props.row)"
-            />
 
-            <!-- 🗑 DELETE -->
-            <q-btn
-              v-if="canDelete"
-              :dense="isTableDense"
-              flat
-              icon="r_delete"
-              round
-              size="sm"
-              text-color="negative"
-              @click.stop="$emit('deleteRows', [props.row])"
-            />
+          <q-card-section class="col">
+            <div class="q-mb-sm">
+              <!-- 🖨 PRINT -->
+              <q-btn
+                v-if="props.printable"
+                :dense="isTableDense"
+                flat
+                icon="r_print"
+                round
+                size="sm"
+                text-color="secondary"
+                @click.stop="$emit('print', props.row)"
+              />
+              <!-- 📝 EDIT -->
+              <q-btn
+                v-if="canUpdate"
+                :dense="isTableDense"
+                flat
+                icon="r_edit"
+                round
+                size="sm"
+                text-color="accent"
+                @click.stop="$emit('openForm', props.row)"
+              />
+
+              <!-- 🗑 DELETE -->
+              <q-btn
+                v-if="canDelete"
+                :dense="isTableDense"
+                flat
+                icon="r_delete"
+                round
+                size="sm"
+                text-color="negative"
+                @click.stop="$emit('deleteRows', [props.row])"
+              />
+            </div>
+            <label class="text-bold cursor-pointer" @click.stop>
+              <q-checkbox
+                v-if="canDelete"
+                v-model="props.selected"
+                dense
+                class="q-mr-sm"
+              />
+              {{ props.cols[0].value }}
+            </label>
           </q-card-section>
 
           <q-separator />

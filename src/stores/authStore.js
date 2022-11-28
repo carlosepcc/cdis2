@@ -19,14 +19,20 @@ export const useAuthStore = defineStore("auth", () => {
   });
   const loggedUserUi = computed(() => {
     return {
+      position: loggedUser.value?.position,
       username: loggedUser.value?.username,
       name: loggedUser.value?.name,
       thumbnail: loggedUser.value?.name[0].toUpperCase(), //thumbnails supports html
-      role: loggedUser.value?.roles.at(-1),
+      role: loggedUser.value?.roles.at(-1) ?? "Usuario",
       roles: loggedUser.value?.roles,
-      roleThumbnail: loggedUser.value?.roles.at(-1)[0], //thumbnails supports html
+      roleThumbnail: loggedUser.value?.roles.at(-1)
+        ? loggedUser.value.roles.at(-1)[0]
+        : "U", //thumbnails supports html
     };
   });
+  const isAdministrator = computed(
+    () => loggedUser.value?.position == "Administrador"
+  );
 
   //ACTIONS FUNCTIONS
   function removeLoggedUser() {
