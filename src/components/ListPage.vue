@@ -13,6 +13,7 @@
     :row-key="rowKey"
     :rows="rows"
     :title="heading"
+    :separator="separator"
     grid-header
     flat
     bordered
@@ -73,11 +74,9 @@
 
       <!-- NUEVA ENTRADA -->
       <q-btn
-        v-if="canCreate || props.canUpdate"
-        :icon="canCreate ? 'r_add' : 'r_edit'"
-        :title="
-          canCreate ? 'Adicionar nueva entrada' : 'Modificar entrada existente'
-        "
+        v-if="canCreate"
+        icon="r_add"
+        title="Adicionar nueva entrada"
         v-show="isTableFullscreen || $q.screen.gt.xs"
         :dense="s.dense"
         flat
@@ -121,6 +120,23 @@
                     v-model="isTableGrid"
                   />
                 </q-item>
+                <!--SEPARATOR
+                  <q-item>
+                  <q-select
+                    title="Líneas para separar las celdas de la tabla"
+                    flat
+                    :options="[
+                      { label: 'Horizontal', value: 'horizontal' },
+                      { label: 'Vertical', value: 'vertical' },
+                      { label: 'Celda', value: 'cell' },
+                      { label: 'Ninguno', value: 'none' },
+                    ]"
+                    no-caps
+                    label="Separadores"
+                    v-model="separator"
+                  />
+                </q-item> -->
+                <!-- EXPORT -->
                 <q-item
                   class="q-pl-lg"
                   title="Exportar tabla en formato CSV"
@@ -343,7 +359,7 @@ const isTableDense = ref($q.screen.lt.sm);
 const tableClass = `overflow-scroll bg-solid ${
   isTableFullscreen.value ? "" : "sticky-header-table"
 }`;
-
+const separator = ref("none");
 const props = defineProps({
   rows: Array,
   columns: Array,

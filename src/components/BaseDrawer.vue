@@ -63,7 +63,7 @@ const drawerItems = [
     @mouseout="miniState = true"
     mini-to-overlay
     :breakpoint="500"
-    bordered
+    :elevated="!miniState"
     side="left"
   >
     <q-scroll-area class="fit">

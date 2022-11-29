@@ -92,7 +92,8 @@ module.exports = configure(function (/* ctx */) {
           secondary: "#c28100",
           accent: "#edbb55",
 
-          dark: "#444241",
+          dark: "#404345", //444241
+          deep: "#35393a",
           light: "#FaFaFa",
           solid: "#FEFEFE",
 

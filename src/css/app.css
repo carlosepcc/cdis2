@@ -1,9 +1,12 @@
 /* app global css */
 :root {
-  --c-dark: #333;
+  --c-dark: #35393a;
   --c-light: #fafafa;
   --c-solid: #fafafa;
   --c-primary-light: #d68f0010;
+}
+--q-dark-page {
+  background: #35393a;
 }
 .backdrop-blur {
   backdrop-filter: blur(4px);

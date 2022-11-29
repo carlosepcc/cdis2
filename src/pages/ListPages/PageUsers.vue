@@ -68,8 +68,9 @@
       @updateList="s.refresh"
       @open-form="(payload) => openForm(payload)"
       @delete-rows="(selectedRows) => s.del(selectedRows)"
-      :canCreate="true"
-      :canDelete="true"
+      :canCreate="false"
+      :canDelete="false"
+      :can-update="auth.isAdmnistrator || auth.isSu"
     >
     </ListPage>
     <DevInfo> Usuarios: {{ s.array }} </DevInfo>

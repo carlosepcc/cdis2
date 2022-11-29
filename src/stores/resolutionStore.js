@@ -23,6 +23,46 @@ export const useResolutionStore = defineStore("resolution", () => {
   }
 
   function print(obj) {
+    obj = {
+      id: 0,
+      number: "string",
+      date: "string",
+      commissions: [
+        {
+          id: 0,
+          president: {
+            id: 0,
+            name: "string",
+            username: "string",
+            position: "string",
+            gender: "string",
+            scientificCategory: "string",
+            roles: ["ADMIN"],
+          },
+          secretary: {
+            id: 0,
+            name: "string",
+            username: "string",
+            position: "string",
+            gender: "string",
+            scientificCategory: "string",
+            roles: ["ADMIN"],
+          },
+          blocked: true,
+          busy: true,
+        },
+      ],
+      resolutor: {
+        id: 0,
+        name: "string",
+        username: "string",
+        position: "string",
+        gender: "string",
+        scientificCategory: "string",
+        roles: ["ADMIN"],
+      },
+    };
+    let documentDefinition = {};
     console.info("The user wants to print: ", obj);
   }
 

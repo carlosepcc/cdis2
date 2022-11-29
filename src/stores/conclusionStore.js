@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import { useApiStore } from "src/stores/apiStore.js";
 import { urls } from "src/composables/useAPI";
+import print from "src/composables/usePrint";
 export const useConclusionStore = defineStore("conclusion", () => {
   //COMPOSITING STORES
   const apiStore = useApiStore();
@@ -101,6 +102,7 @@ export const useConclusionStore = defineStore("conclusion", () => {
         },
       },
     };
+    print(documentDefinition);
     console.info("The user wants to print: ", obj);
   }
   return {

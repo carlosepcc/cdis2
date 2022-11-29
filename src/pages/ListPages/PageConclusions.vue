@@ -58,10 +58,9 @@
       </template>
     </BaseForm>
     <ListPage
-      :columns="conclusionFields"
+      :columns="cols"
       :rows="s.array"
-      heading="Casos"
-      rowKey="id"
+      heading="Conclusiones de la Comisión Disciplinaria"
       @updateList="s.refresh()"
       @open-form="(payload) => openForm(payload)"
       @delete-rows="(selectedRows) => s.del(selectedRows)"
@@ -142,26 +141,26 @@ const conclusion = ref({
   },
 });
 
-const casoFields = ref([
+const fields = ref([
   {
-    name: "denunciation",
+    name: "infractor",
     required: true,
-    label: "Denunciation",
-    field: (caso) => caso.denunciation1?.description.slice(0, 30),
+    label: "Infractor",
+    field: (c) => c.infractor.name,
     sortable: true,
   },
   {
-    name: "fechaapertura",
+    name: "fault",
     required: true,
-    label: "Fecha de apertura",
-    field: "fechaapertura",
+    label: "Falta",
+    field: "fault",
     sortable: true,
   },
   {
-    name: "fechaexpiracion",
+    name: "qualification",
     required: true,
-    label: "Fecha de expiración",
-    field: "fechaexpiracion",
+    label: "Calificación",
+    field: "qualification",
     sortable: true,
   },
   {
