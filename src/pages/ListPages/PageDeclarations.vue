@@ -7,31 +7,37 @@
       @submit="submitFormData"
       @reset="resetFormData"
       @close-form="showForm = false"
+      :is-modifying="update"
     >
       <template v-slot:default>
         <!-- Nombre declaration -->
         <q-select
-          v-model="declarationObject.denunciation"
+          :readonly="auth.isStudent || auth.isWorker"
+          :borderless="auth.isStudent || auth.isWorker"
+          :filled="!auth.isStudent && !auth.isWorker"
+          v-model="formObj.denunciation"
           :dense="state.dense"
           :options="denunciationStore.array"
           :rules="[val || 'Por favor, seleccione una opción']"
-          filled
           lazy-rules
           map-options
           emit-value
           label="Caso disciplinario"
           behavior="dialog"
-          :option-label="(d) => d.description.slice(0, 50) + '(...)'"
+          option-label="subject"
           option-value="id"
         />
         <q-select
-          v-model="declarationObject.declarer"
+          v-if="!isDeclarer"
+          :readonly="auth.isStudent || auth.isWorker"
+          :borderless="auth.isStudent || auth.isWorker"
+          :filled="!auth.isStudent && !auth.isWorker"
+          v-model="formObj.declarer"
           :options="userStore.array"
           :dense="state.dense"
           :rules="[val || 'Por favor, seleccione un usuario']"
           label="Usuario a declarar"
           lazy-rules
-          filled
           map-options
           emit-value
           option-label="name"
@@ -39,20 +45,18 @@
         />
         <q-input
           label="Título"
-          :disable="
-            auth.loggedUserUi.role != roles.pre &&
-            auth.loggedUserUi.role != roles.su
-          "
-          filled
+          :readonly="isDeclarer || auth.isStudent || auth.isWorker"
+          :borderless="isDeclarer || auth.isStudent || auth.isWorker"
+          :filled="!auth.isStudent && !auth.isWorker"
           :dense="state.dense"
-          v-model.trim="declarationObject.title"
+          v-model.trim="formObj.title"
           :rules="[val || 'Por favor, escriba un título']"
         />
         <!-- Descripción declaración -->
         <q-input
           label="Descripción"
           :v-show="false"
-          v-model.trim="declarationObject.description"
+          v-model.trim="formObj.description"
           :dense="state.dense"
           :rules="[
             (val) =>
@@ -64,7 +68,7 @@
           lazy-rules
         />
         <DevInfo>
-          declarationObject: {{ declarationObject }}<br />
+          formObj: {{ formObj }}<br />
           declarationStore.array: {{ s.array }}
         </DevInfo>
       </template>
@@ -102,24 +106,27 @@ denunciationStore.refresh();
 const showForm = ref(false);
 
 // MODIFICAR (Abrir formulario con datos del objeto a modificar)
-const declarationObject = ref({ title: "Declaración del " });
+const formObj = ref({ title: "Declaración del " });
 
-const update = computed(() => declarationObject.value.id !== undefined);
+const isDeclarer = computed(
+  () => formObj.value.declarer.id === auth.loggedUser.id
+);
+const update = computed(() => formObj.value.id !== undefined);
 //openForm triggered on: Nueva entrada, Modificar
 function openForm(obj = { title: "Declaración del " }) {
-  declarationObject.value = obj;
+  formObj.value = obj;
   showForm.value = true;
 }
 
 //SUBMIT
 function submitFormData() {
-  s.save(declarationObject.value);
+  s.save(formObj.value);
   resetFormData();
   showForm.value = false;
 }
 //RESET
 function resetFormData() {
-  declarationObject.value = {};
+  formObj.value = {};
 }
 
 const declarationFields = ref([

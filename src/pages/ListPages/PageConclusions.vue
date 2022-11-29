@@ -71,6 +71,7 @@
       printable
       @print="(row) => s.print(row)"
       :can-create="false"
+      :can-delete="false"
     ></ListPage>
     <DevInfo>
       {{ s.array }}

@@ -277,6 +277,7 @@ const update = computed(() => (formObj.value.id ? true : false));
 const openForm = (obj) => {
   //Object.assign(formObj.value, obj ?? { vocals: [{}] });
   formObj.value = obj ?? { vocals: [{}] };
+  if (formObj.value.vocals.length == 0) formObj.value.vocals.push({});
   userStore.refresh();
   commissionStore.refresh();
   showForm.value = true;

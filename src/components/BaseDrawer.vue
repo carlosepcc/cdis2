@@ -21,7 +21,7 @@ const drawerItems = [
     title: "Casos disciplinarios",
     icon: "r_admin_panel_settings",
     to: "cases",
-    for: [r.adm, r.user, r.dec, r.su],
+    for: [r.adm, r.user, r.dec, r.su, r.pre, r.sec],
   },
   {
     title: "Usuarios",
@@ -39,7 +39,7 @@ const drawerItems = [
     title: "Conclusiones",
     icon: "r_description",
     to: "conclusions",
-    for: [r.dec, r.pre, r.sec],
+    for: [r.dec, r.pre, r.sec, r.voc],
   },
   {
     title: "Resoluciones",

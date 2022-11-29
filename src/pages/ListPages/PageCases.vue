@@ -211,6 +211,8 @@
       @open-form="(payload) => openForm(payload)"
       :can-update="false"
       :can-delete="false"
+      printable
+      @print="(row) => s.print(row)"
     ></ListPage>
 
     <DevInfo>

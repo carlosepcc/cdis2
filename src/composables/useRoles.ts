@@ -3,6 +3,9 @@ const roles = {
   su: "ADMIN",
   user: "USUARIO",
   adm: "ADMINISTRADOR",
+  pre: "PRESIDENT",
+  sec: "SECRETARY",
+  voc: "VOCAL",
 };
 export const positions = {
   dec: "Decano",

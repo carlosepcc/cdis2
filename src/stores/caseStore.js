@@ -26,6 +26,9 @@ export const useCaseStore = defineStore("case", () => {
     object.status = statuses.archived;
     return apiStore.save(object, url, true, array);
   }
+  function print() {
+    console.info("The user wants to print");
+  }
 
   return {
     array,
@@ -33,5 +36,6 @@ export const useCaseStore = defineStore("case", () => {
     refresh,
     save,
     archive,
+    print,
   };
 });
