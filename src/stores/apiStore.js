@@ -60,7 +60,7 @@ export const useApiStore = defineStore("api", () => {
   }
 
   function save(objectToSave, url, isUpdate = objectToSave.id, refArray) {
-    console.info("save function triggered");
+    console.info("save function triggered objectToSave: ", objectToSave);
     let noti = Notify.create({
       type: "ongoing",
       message: `Guardando. ${url}`,

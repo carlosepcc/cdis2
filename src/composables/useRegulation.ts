@@ -4,34 +4,40 @@ import { computed } from "vue";
 const res = {
   atenuantes: [
     {
-      inciso: "a",
-      text: "Haber mantenido una buena actitud ante el estudio desde el inicio de su especialidad hasta el momento de cometer la falta",
+      value: "a",
+      label:
+        "Haber mantenido una buena actitud ante el estudio desde el inicio de su especialidad hasta el momento de cometer la falta",
     },
     {
-      inciso: "b",
-      text: "Haberse declarado autor del hecho cometido antes de que se produzca la denunciation correspondiente",
+      value: "b",
+      label:
+        "Haberse declarado autor del hecho cometido antes de que se produzca la denunciation correspondiente",
     },
     {
-      inciso: "c",
-      text: "Reconocer su responsabilidad en la primera comparecencia ante la ComisiónDisciplinaria",
+      value: "c",
+      label:
+        "Reconocer su responsabilidad en la primera comparecencia ante la ComisiónDisciplinaria",
     },
     {
-      inciso: "d",
-      text: "Adoptar una actitud autocrítica y consecuente ante la falta cometida",
+      value: "d",
+      label:
+        "Adoptar una actitud autocrítica y consecuente ante la falta cometida",
     },
     {
-      inciso: "e",
-      text: "Contribuir al total esclarecimiento de los hechos por todos los medios a su alcance",
+      value: "e",
+      label:
+        "Contribuir al total esclarecimiento de los hechos por todos los medios a su alcance",
     },
   ],
   agravantes: [
     {
-      inciso: "a",
-      text: "Haber mantenido una mala actitud en relación con el estudio antes de la comisión de la falta. En este sentido se tomarán como criterios principales los que corresponden al colectivo estudiantil y al profesor guía",
+      value: "a",
+      label:
+        "Haber mantenido una mala actitud en relación con el estudio antes de la comisión de la falta. En este sentido se tomarán como criterios principales los que corresponden al colectivo estudiantil y al profesor guía",
     },
     {
-      inciso: "b",
-      text: "Ser reincidente",
+      value: "b",
+      label: "Ser reincidente",
     },
   ],
   qualificationLabels: ["Muy Grave", "Grave", "Menos Grave"],

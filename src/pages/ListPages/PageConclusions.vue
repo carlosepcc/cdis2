@@ -8,67 +8,72 @@
       @reset="resetFormData"
       @close-form="closeForm"
     >
-      <template v-slot:default>
-        <div>
-          <div class="text-dark text-caption">Denunciationdo</div>
-          {{ conclusion.infractor.name }}
-        </div>
-        <div>
-          <div class="text-dark text-caption">Denunciation</div>
-          {{ conclusion.denunciation.description }}
-        </div>
-        <q-input filled v-model="conclusion.fault" label="Falta" autogrow />
-        <q-select
-          v-model="conclusion.calificacion.text"
-          :dense="state.dense"
-          :options="res.qualificationLabels"
-          :rules="[val || 'Por favor, seleccione una comisión']"
-          filled
-          lazy-rules
-          label="Calificación de la falta"
-        />
-        <q-select
-          v-model="conclusion.atenuantes"
-          multiple
-          :dense="state.dense"
-          :options="res.atenuantes"
-          :rules="[val || 'Por favor, seleccione atenuantes']"
-          filled
-          lazy-rules
-          map-options
-          option-label="text"
-          option-value="inciso"
-          label="Atenunantes"
-          behavior="dialog"
-        />
-        <q-select
-          v-model="conclusion.agravantes"
-          multiple
-          :dense="state.dense"
-          :options="res.agravantes"
-          :rules="[val || 'Por favor, seleccione agravantes']"
-          filled
-          lazy-rules
-          map-options
-          option-label="text"
-          option-value="inciso"
-          label="Agravantes"
-          behavior="dialog"
-        />
-      </template>
+      <div>
+        <div class="text-dark text-caption">Denunciation</div>
+        {{ formObj.infractor.name }}
+      </div>
+      <div>
+        <div class="text-dark text-caption">Denunciation</div>
+        {{ formObj.denunciation.description }}
+      </div>
+      <q-input filled v-model="formObj.fault" label="Falta" autogrow />
+
+      <!-- QUALIFICATION -->
+      <q-select
+        v-model="formObj.qualification"
+        :dense="state.dense"
+        :options="res.qualificationLabels"
+        :rules="[val || 'Por favor, seleccione una comisión']"
+        filled
+        lazy-rules
+        label="Calificación de la falta"
+      />
+      <!-- Atenunantes -->
+      <q-select
+        v-model="formObj.atenuantes"
+        multiple
+        :dense="state.dense"
+        :options="res.atenuantes"
+        :rules="[val || 'Por favor, seleccione atenuantes']"
+        filled
+        lazy-rules
+        map-options
+        emit-value
+        label="Atenunantes"
+        behavior="dialog"
+      />
+      <!-- Agravantes -->
+      <q-select
+        v-model="formObj.agravantes"
+        multiple
+        :dense="state.dense"
+        :options="res.agravantes"
+        :rules="[val || 'Por favor, seleccione agravantes']"
+        filled
+        lazy-rules
+        map-options
+        emit-value
+        label="Agravantes"
+        behavior="dialog"
+      />
+
+      <DevInfo>
+        {{ formObj }}
+      </DevInfo>
     </BaseForm>
     <ListPage
       :columns="cols"
-      :rows="s.array"
+      :rows="s.arrayUi"
       heading="Conclusiones de la Comisión Disciplinaria"
       @updateList="s.refresh()"
       @open-form="(payload) => openForm(payload)"
       @delete-rows="(selectedRows) => s.del(selectedRows)"
       printable
       @print="(row) => s.print(row)"
+      :can-create="false"
     ></ListPage>
     <DevInfo>
-      {{ formObj }}
+      {{ s.array }}
     </DevInfo>
   </q-page>
 </template>
@@ -146,7 +151,31 @@ const conclusion = ref({
     ],
   },
 });
+const formObj = ref({});
+const update = computed(() => formObj.value.id !== undefined);
 
+const showForm = ref(false);
+function openForm(obj = {}) {
+  Object.assign(formObj.value, obj);
+
+  showForm.value = true;
+}
+const closeForm = () => {
+  showForm.value = false;
+  resetFormData();
+  s.refresh();
+};
+
+//SUBMIT
+function submitFormData() {
+  s.update(formObj.value);
+  resetFormData();
+  closeForm();
+}
+//RESET
+function resetFormData() {
+  formObj.value = {};
+}
 const cols = ref([
   {
     name: "infractor",

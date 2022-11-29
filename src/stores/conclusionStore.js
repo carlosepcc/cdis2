@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useApiStore } from "src/stores/apiStore.js";
 import { urls } from "src/composables/useAPI";
 import generatePdf from "src/composables/usePrint";
@@ -8,7 +8,13 @@ export const useConclusionStore = defineStore("conclusion", () => {
   const apiStore = useApiStore();
   const url = urls.conclusion;
   const array = ref([]);
-
+  const arrayUi = computed(() => {
+    array.value.forEach((item) => {
+      item.atenuantes = item.atenuantes?.split("");
+      item.agravantes = item.agravantes?.split("");
+    });
+    return array.value;
+  });
   //Functions
 
   function refresh() {
@@ -16,6 +22,26 @@ export const useConclusionStore = defineStore("conclusion", () => {
     apiStore.read(url, array);
   }
   function update(obj) {
+    let dto = obj;
+    /*Sructure {
+      id: 0,
+      fault: "string",
+      date: "2022-11-29",
+      qualification: "string",
+      sanction: "string",
+      sanctionInciso: "string",
+      atenuantes: "string",
+      agravantes: "string",
+      prescription: 0,
+      recordRevision: "string",
+    };*/
+    let atenuantesString = "";
+    let agravantesString = "";
+
+    dto.atenuantes.forEach((v) => (atenuantesString += v));
+    dto.agravantes.forEach((v) => (agravantesString += v));
+    dto.atenuantes = atenuantesString;
+    dto.agravantes = agravantesString;
     return apiStore.save(obj, url, true, array);
   }
 
@@ -171,5 +197,6 @@ export const useConclusionStore = defineStore("conclusion", () => {
     refresh,
     update,
     print,
+    arrayUi,
   };
 });
