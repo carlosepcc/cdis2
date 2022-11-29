@@ -3,7 +3,9 @@
     <BaseForm
       v-model="showForm"
       v-show="showForm"
-      :formTitle="`Denuncia ${formObj.idDenuncia ?? ''}`"
+      :formTitle="`Denuncia ${
+        formObj.id ? formObj.id + ': ' + formObj.subject : ''
+      }`"
       @submit="submitFormData"
       @reset="resetFormData"
       @close-form="closeForm"
@@ -35,17 +37,18 @@
       <!-- COMMISSION -->
       <q-select
         v-if="formObj.id"
-        :disable="auth.isDecano && auth.isAdministrator"
+        :borderless="!auth.isDecano && !auth.isSu"
+        :readonly="!auth.isDecano && !auth.isSu"
+        :filled="auth.isDecano || auth.isSu"
         v-model="formObj.commission"
         :dense="state.dense"
         :options="commissionStore.array"
         :rules="[val || 'Por favor, seleccione los infractores']"
-        filled
         map-options
         emit-value
         :option-label="(c) => c.president?.name + ', ' + c.secretary?.name"
         option-value="id"
-        label="Asignar Comisión Disciplinaria"
+        label="Comisión Disciplinaria que atiende el caso"
         lazy-rules
       >
         <template v-slot:prepend>
@@ -54,9 +57,11 @@
 
       <!-- END DATE -->
       <q-input
+        :borderless="!auth.isDecano && !auth.isSuistrator"
+        :readonly="!auth.isDecano && !auth.isSuistrator"
+        :filled="auth.isDecano || auth.isSuistrator"
         v-if="formObj.commission"
         label="Fin de actuaciones de la comisión"
-        filled
         v-model="formObj.endDate"
         :rules="[]"
       >
@@ -84,7 +89,7 @@
         borderless
         :disable="
           auth.loggedUserUi.role != roles.dec &&
-          auth.isAdministrator
+          auth.isSuistrator
         "
         v-model="formObj.status"
         :dense="state.dense"

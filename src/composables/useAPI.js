@@ -1,5 +1,4 @@
 import { Dialog, Notify, QSpinnerGears } from "quasar";
-import isJwtTokenExpired, { decode } from "jwt-check-expiry";
 import state, { usersArr } from "./useState";
 import { api } from "boot/axios";
 import route from "src/router";
@@ -10,6 +9,7 @@ export const urls = {
   conclusion: "conclusion",
   resolution: "resolution",
   commission: "commission",
+  case: "denunciation/case",
   login: "login",
   user: "user",
 };
@@ -17,8 +17,11 @@ export const goToIndexJs = () => {
   Router.replace("/");
 };
 
-// LISTAR (Actualizar Arreglos en el cliente con datos del servidor)
-const listar = (list = usersArr, url = "/usuario") => {
+// OLD FUNCTIONS
+{
+  // LISTAR (Actualizar Arreglos en el cliente con datos del servidor)
+  /*
+const listar = (list = usersArr, url = urls.user) => {
   let noti = Notify.create({
     type: "ongoing",
     message: `Accediendo al listado ${url}`,
@@ -114,7 +117,7 @@ export const eliminar = (selectedRowsRef = null, list, url = "/usuario") => {
       //CREATE an idsArray from the objects array
       // /* let idsUrl = url + "/";
       // objArr.forEach((obj) => idsUrl.push(`${obj.id},`));
-      // idsUrl.pop(); */
+      // idsUrl.pop();
       let idsArr = [];
       selectedRowsRef.value.forEach((obj) => idsArr.push(obj.id)); //Se llena el arreglo de ids con los ids de los objetos del arreglo de objetos
       //REQUEST TO SERVER
@@ -157,6 +160,10 @@ export const eliminar = (selectedRowsRef = null, list, url = "/usuario") => {
     });
 };
 
+
+export default listar;
+*/
+}
 // CREA UNA NOTIFICACION VISUAL DE ERRORES
 export const notifyError = (
   error,
@@ -221,4 +228,3 @@ export const notifyError = (
     noti(notiConfig);
   }
 };
-export default listar;

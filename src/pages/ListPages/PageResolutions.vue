@@ -43,15 +43,19 @@
             <div class="row items-center no-wrap">
               <div class="col">
                 <div class="text-light">Comisión {{ i + 1 }}</div>
+                <span class="text-grey q-ml-l"
+                  >Esta comisión {{ c.blocked ? "ya" : "no" }} ha atendido
+                  casos, {{ c.blocked ? "no" : "" }} puede ser modificada.</span
+                >
               </div>
 
-              <div class="col-auto" v-if="!update">
+              <div class="col-auto" v-if="!c.blocked">
                 <q-btn
                   color="negative"
                   size="sm"
-                  title="Descartar comisión"
+                  :title="(update ? 'Eliminar' : 'Descartar') + ' comisión'"
                   flat
-                  icon="r_close"
+                  :icon="update ? 'r_delete' : 'r_close'"
                   @click="resolutionObject.commissions.splice(i, 1)"
                 />
               </div>
@@ -60,7 +64,7 @@
           <q-separator />
           <q-card-section>
             <q-select
-              :readonly="update"
+              :readonly="c.blocked"
               v-model="c.president"
               :dense="state.dense"
               :options="userStore.teachers"
@@ -74,7 +78,7 @@
             />
             <q-select
               label="Secretario"
-              :readonly="update"
+              :readonly="c.blocked"
               v-model="c.secretary"
               :dense="state.dense"
               :options="userStore.teachers"
@@ -112,14 +116,14 @@
     </BaseForm>
     <!-- TODO:Print -->
     <ListPage
-      :columns="resolutionFields"
-      :rows="s.array"
-      heading="Resolución"
-      rowKey="id"
-      @updateList="s.refresh"
-      @open-form="(payload) => openForm(payload)"
       @delete-rows="(selectedRows) => s.del(selectedRows)"
+      @open-form="(row) => openForm(row)"
+      @print="(row) => s.print(row)"
+      :columns="resolutionFields"
+      @updateList="s.refresh"
+      heading="Resolución"
       :canUpdate="false"
+      :rows="s.array"
       printable
     ></ListPage>
     <DevInfo>
@@ -183,7 +187,7 @@ const resolutionFields = ref([
     name: "number",
     label: "Número",
     field: "number",
-    align: "center",
+    align: "left",
     sortable: true,
   },
   {

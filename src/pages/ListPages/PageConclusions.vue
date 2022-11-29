@@ -75,7 +75,8 @@ import ListPage from "components/ListPage.vue";
 import BaseForm from "components/BaseForm.vue";
 import DevInfo from "components/DevInfo.vue";
 import state from "src/composables/useState.js";
-
+import { useConclusionStore } from "stores/conclusionStore";
+const s = useConclusionStore();
 const conclusion = ref({
   fault: "Tentativa de fraude",
   date: "2022-10-3",

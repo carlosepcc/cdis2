@@ -22,11 +22,16 @@ export const useResolutionStore = defineStore("resolution", () => {
     return apiStore.del(itemsToDelete, url, array);
   }
 
+  function print(obj) {
+    console.info("The user wants to print: ", obj);
+  }
+
   return {
     array,
     url,
     refresh,
     save,
     del,
+    print,
   };
 });

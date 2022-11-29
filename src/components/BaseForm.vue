@@ -62,7 +62,6 @@
 </template>
 <script setup>
 import { ref } from "vue";
-import { guardar } from "src/composables/useAPI.js";
 import state from "src/composables/useState.js";
 
 //DOM

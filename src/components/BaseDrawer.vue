@@ -15,6 +15,13 @@ const drawerItems = [
     title: "Denuncias",
     icon: "r_announcement",
     to: "denunciations",
+    for: [r.adm, r.user, r.dec, r.su],
+  },
+  {
+    title: "Casos disciplinarios",
+    icon: "r_admin_panel_settings",
+    to: "cases",
+    for: [r.adm, r.user, r.dec, r.su],
   },
   {
     title: "Usuarios",
@@ -30,9 +37,9 @@ const drawerItems = [
   },
   {
     title: "Conclusiones",
-    icon: "r_article",
+    icon: "r_description",
     to: "conclusions",
-    for: [r.pre, r.sec, r.dec],
+    for: [r.dec, r.pre, r.sec],
   },
   {
     title: "Resoluciones",
@@ -72,8 +79,8 @@ const drawerItems = [
               v-if="
                 drawerItem.for === undefined ||
                 auth.offlineTesting ||
-                auth.loggedUserUi?.role === r.adm ||
-                auth.loggedUser?.roles.some((role) => drawerItem.for == role)
+                auth.loggedUserUi?.role === r.su ||
+                drawerItem.for.some((role) => role == auth.loggedUserUi?.role)
               "
             />
             <!-- TODO si el item del drawer no tiene for, o el arreglo de permisos del usuario autenticado tiene algún permiso en común con el arreglo fors del item, se muestra, de lo contrario no. -->

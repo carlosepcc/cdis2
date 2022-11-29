@@ -19,6 +19,7 @@ export const useApiStore = defineStore("api", () => {
   function read(url = urls.user, refArray) {
     let responseData = [];
     let noti = Notify.create({
+      timeout: "30000",
       type: "ongoing",
       message: `Accediendo al listado ${url}`,
       spinner: QSpinnerGears,
@@ -28,7 +29,13 @@ export const useApiStore = defineStore("api", () => {
     api
       .get(url)
       .then((response) => {
-        noti({ timeout: 100 });
+        noti({
+          timeout: 200,
+          type: "positive",
+          spinner: null,
+          message: `Se obtuvo el listado ${url}`,
+          actions: [{ label: "OK", color: "white" }],
+        });
         // handle success
         console.log(`Api endpoint ${url} accessed. Response: `, response);
 

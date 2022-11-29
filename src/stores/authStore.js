@@ -24,7 +24,7 @@ export const useAuthStore = defineStore("auth", () => {
       username: loggedUser.value?.username,
       name: loggedUser.value?.name,
       thumbnail: loggedUser.value?.username[0].toUpperCase(), //thumbnails supports html
-      role: loggedUser.value?.roles.at(-1) ?? "Usuario",
+      role: loggedUser.value?.roles.at(-1) ?? "USUARIO",
       roles: loggedUser.value?.roles,
       roleThumbnail: loggedUser.value?.roles.at(-1)
         ? loggedUser.value.roles.at(-1)[0]
