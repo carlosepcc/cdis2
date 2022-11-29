@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useApiStore } from "src/stores/apiStore.js";
 import { urls } from "src/composables/useAPI";
+import generatePdf from "src/composables/usePrint";
 export const useResolutionStore = defineStore("resolution", () => {
   //COMPOSITING STORES
   const apiStore = useApiStore();
@@ -22,48 +23,78 @@ export const useResolutionStore = defineStore("resolution", () => {
     return apiStore.del(itemsToDelete, url, array);
   }
 
-  function print(obj) {
-    obj = {
-      id: 0,
-      number: "string",
-      date: "string",
-      commissions: [
-        {
-          id: 0,
-          president: {
-            id: 0,
-            name: "string",
-            username: "string",
-            position: "string",
-            gender: "string",
-            scientificCategory: "string",
-            roles: ["ADMIN"],
-          },
-          secretary: {
-            id: 0,
-            name: "string",
-            username: "string",
-            position: "string",
-            gender: "string",
-            scientificCategory: "string",
-            roles: ["ADMIN"],
-          },
-          blocked: true,
-          busy: true,
-        },
-      ],
-      resolutor: {
-        id: 0,
-        name: "string",
-        username: "string",
-        position: "string",
-        gender: "string",
-        scientificCategory: "string",
-        roles: ["ADMIN"],
+  function print(r) {
+    const tableBody = computed(() => {
+      let table = [
+        [
+          { text: "No. Comisión", style: "tableHeader", alignment: "center" },
+          { text: "Presidente", style: "tableHeader", alignment: "center" },
+          { text: "Secretario", style: "tableHeader", alignment: "center" },
+        ],
+      ];
+      r.commissions.forEach((v, index) =>
+        table.push([
+          { text: index + 1, alignment: "center" },
+          v.president.name,
+          v.secretary.name,
+        ])
+      );
+      return table;
+    });
+    let documentDefinition = {
+      info: {
+        title: "Resolución del caso disciplinario",
+        author: r.resolutor?.name,
+        subject:
+          "Conclusiones de la comisión disciplinaria para el caso disciplinario",
+        keywords: "caso disciplinario",
+        creator:
+          "Sistema de Gestión para el Proceso de Comisión Disciplinaria de la Facultad 4 (CDIS)",
       },
+      //userPassword: "f4",
+      //ownerPassword: "owner",
+      // a string or { width: number, height: number }
+      pageSize: "A4",
+
+      content: [
+        {
+          text: `RESOLUCIÓN No. ${r.number}\n\n`,
+          style: "header",
+          alignment: "center",
+        },
+        {
+          text: `POR CUANTO: Por la Resolución No. 99 de fecha 14 de agosto del  2002 del Ministro de la Informática y las Comunicaciones, se creó la Unidad Presupuestada Universidad Informática adscrita al Ministerio de la Informática y las Comunicaciones.
+
+POR CUANTO: Por el Acuerdo número 7317 del Comité Ejecutivo del Consejo de Ministro, dictado con fecha 19 de diciembre de 2012, se adscribió la Universidad de las Ciencias Informáticas al Ministerio de Educación Superior.
+
+POR CUANTO: Por Resolución Rectoral, se faculta a quien resuelve, ${r.resolutor.scientificCategory}. ${r.resolutor.name} para que se encargue de dirigir la Facultad No. 4 con todas las atribuciones y derechos correspondientes al cargo de Decano.
+
+POR CUANTO: El Reglamento Disciplinario para los estudiantes de la UCI en su artículo 15 establece que el Decano designa a los miembros de las Comisiones Disciplinarias.
+
+POR TANTO: En uso de las facultades que me están conferidas`,
+        },
+        {
+          text: "\nRESUELVO\n",
+          style: "header",
+          alignment: "center",
+        },
+        `\nPRIMERO: Designar como integrantes de las Comisión Disciplinarias de la Facultad 4, a los siguientes compañeros:\n\n`,
+        {
+          color: "#444",
+          table: {
+            widths: ["auto", "auto", "auto"],
+            body: tableBody.value,
+          },
+        },
+        `\nSEGUNDO: Notifíquese a los interesados y comuníquese a quien corresponda.`,
+        `\nDado en la Habana a los ${new Date().getDay()} días del mes ${new Date().getMonth()} del año ${new Date().getFullYear()}.
+“Año ${new Date().getFullYear() - 1958} de la Revolución”`,
+        `\n________________________________
+${r.resolutor.scientificCategory}. ${r.resolutor.name}`,
+      ],
     };
-    let documentDefinition = {};
-    console.info("The user wants to print: ", obj);
+    console.info("The user wants to print: ", r);
+    generatePdf(documentDefinition);
   }
 
   return {

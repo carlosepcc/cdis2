@@ -64,7 +64,12 @@
       @updateList="s.refresh()"
       @open-form="(payload) => openForm(payload)"
       @delete-rows="(selectedRows) => s.del(selectedRows)"
+      printable
+      @print="(row) => s.print(row)"
     ></ListPage>
+    <DevInfo>
+      {{ formObj }}
+    </DevInfo>
   </q-page>
 </template>
 <script setup>
@@ -76,6 +81,7 @@ import DevInfo from "components/DevInfo.vue";
 import state from "src/composables/useState.js";
 import { useConclusionStore } from "stores/conclusionStore";
 const s = useConclusionStore();
+s.refresh();
 const conclusion = ref({
   fault: "Tentativa de fraude",
   date: "2022-10-3",
@@ -141,7 +147,7 @@ const conclusion = ref({
   },
 });
 
-const fields = ref([
+const cols = ref([
   {
     name: "infractor",
     required: true,

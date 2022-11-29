@@ -229,5 +229,7 @@ export const useAuthStore = defineStore("auth", () => {
     isStudent,
     isDecano,
     isSu,
+    isTeacher,
+    isWorker,
   };
 });

@@ -74,7 +74,7 @@
             >
               <q-date v-model="formObj.endDate" mask="YYYY-MM-DD">
                 <div class="row items-center justify-end">
-                  <q-btn v-close-popup label="Close" color="primary" flat />
+                  <q-btn v-close-popup label="Cerrar" color="primary" flat />
                 </div>
               </q-date>
             </q-popup-proxy>

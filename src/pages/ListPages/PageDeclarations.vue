@@ -77,6 +77,7 @@
       @updateList="s.refresh()"
       @open-form="(payload) => openForm(payload)"
       @delete-rows="(selectedRows) => s.del(selectedRows)"
+      :can-create="auth.isTeacher"
     ></ListPage>
   </q-page>
 </template>

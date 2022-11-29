@@ -11,6 +11,9 @@
   <iframe :srcdoc="documentContent">
     <p>Su navegador no soporta iframes.</p>
   </iframe>
+  <pre>
+    {{ documentDefinition }}
+  </pre>
 </template>
 <script setup>
 import { reactive, computed, ref } from "vue";
@@ -246,6 +249,7 @@ let documentDefinition = {
   },
 };
 function generateDocument() {
+  console.info(documentDefinition);
   pdfMake.createPdf(documentDefinition).open();
 }
 const documentContent =
