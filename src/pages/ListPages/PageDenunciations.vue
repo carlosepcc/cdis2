@@ -145,7 +145,7 @@
         lazy-rules
       />
       <!-- VOCALS -->
-      <template v-if="formObj.id">
+      <template v-if="update">
         <q-card
           v-for="(vocal, i) in formObj.vocals"
           :key="i"
@@ -198,7 +198,6 @@
           </q-card-section>
         </q-card>
         <q-btn
-          v-show="!update"
           flat
           size="xl"
           color="grey"

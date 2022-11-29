@@ -43,18 +43,14 @@ export const useResolutionStore = defineStore("resolution", () => {
     });
     let documentDefinition = {
       info: {
-        title: "Resolución del caso disciplinario",
+        title: `Resolución decanal ${r.number}`,
         author: r.resolutor?.name,
         subject:
-          "Conclusiones de la comisión disciplinaria para el caso disciplinario",
-        keywords: "caso disciplinario",
+          "Resolución decanal para las comisiones disciplinarias que actuarán durante el curso académico",
+        keywords: "comisiones, disciplinaria, resolución, decanal",
         creator:
           "Sistema de Gestión para el Proceso de Comisión Disciplinaria de la Facultad 4 (CDIS)",
       },
-      //userPassword: "f4",
-      //ownerPassword: "owner",
-      // a string or { width: number, height: number }
-      pageSize: "A4",
 
       content: [
         {
