@@ -33,7 +33,7 @@ const drawerItems = [
     title: "Declaraciones",
     icon: "r_chat",
     to: "declarations",
-    for: [r.user, r.pres, r.sec],
+    for: [r.user, r.pre, r.sec],
   },
   {
     title: "Conclusiones",

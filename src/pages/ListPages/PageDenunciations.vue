@@ -43,7 +43,7 @@
         v-model="formObj.commission"
         :dense="state.dense"
         :options="commissionStore.array"
-        :rules="[val || 'Por favor, seleccione los infractores']"
+        :rules="[val || 'Por favor, seleccione una comisión']"
         map-options
         emit-value
         :option-label="(c) => c.president?.name + ', ' + c.secretary?.name"
@@ -58,94 +58,27 @@
       <!-- END DATE -->
       <q-input
         :borderless="!auth.isDecano && !auth.isSuistrator"
-        :readonly="!auth.isDecano && !auth.isSuistrator"
+        readonly
         :filled="auth.isDecano || auth.isSuistrator"
         v-if="formObj.commission"
         label="Fin de actuaciones de la comisión"
         v-model="formObj.endDate"
-        :rules="[]"
+        :rules="[val || 'Por favor, seleccione una fecha']"
       >
+        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+          <q-date v-model="formObj.endDate" mask="YYYY-MM-DD">
+            <div class="row items-center justify-end">
+              <q-btn v-close-popup label="Cerrar" color="primary" flat />
+            </div>
+          </q-date>
+        </q-popup-proxy>
         <template v-slot:append>
-          <q-icon name="event" class="cursor-pointer">
-            <q-popup-proxy
-              cover
-              transition-show="scale"
-              transition-hide="scale"
-            >
-              <q-date v-model="formObj.endDate" mask="YYYY-MM-DD">
-                <div class="row items-center justify-end">
-                  <q-btn v-close-popup label="Cerrar" color="primary" flat />
-                </div>
-              </q-date>
-            </q-popup-proxy>
-          </q-icon>
+          <q-icon name="event" class="cursor-pointer"> </q-icon>
         </template>
       </q-input>
 
-      <!-- STATUS -->
-      <!-- <q-select
-        v-if="formObj.id"
-        readonly
-        borderless
-        :disable="
-          auth.loggedUserUi.role != roles.dec &&
-          auth.isSuistrator
-        "
-        v-model="formObj.status"
-        :dense="state.dense"
-        :options="['Pendiente', 'Activa', 'Cerrada', 'Archivada']"
-        :rules="[val || 'Por favor, seleccione un estado']"
-        label="Estado"
-        lazy-rules
-      /> -->
-
-      <!--TODO @filter="filterFn" use-input -->
-      <!-- INFRACTORES -->
-      <q-select
-        :readonly="update"
-        :filled="!update"
-        :borderless="update"
-        v-model="formObj.infractors"
-        multiple
-        :dense="state.dense"
-        :options="userStore.students"
-        :rules="[val || 'Por favor, seleccione los infractores']"
-        label="Infractores"
-        use-chips
-        lazy-rules
-        map-options
-        option-label="name"
-        emit-value
-        option-value="id"
-        behavior="dialog"
-      />
-      <!-- Asunto denuncia -->
-      <q-input
-        :readonly="update"
-        v-model.trim="formObj.subject"
-        :dense="state.dense"
-        :rules="[
-          (val) => (val && val.length > 0) || 'Este campo no puede estar vacío',
-        ]"
-        clearable
-        label="Asunto"
-        lazy-rules
-      />
-      <!-- Descripción denuncia -->
-      <q-input
-        :readonly="update"
-        v-model.trim="formObj.description"
-        :dense="state.dense"
-        :rules="[
-          (val) => (val && val.length > 0) || 'Este campo no puede estar vacío',
-        ]"
-        autogrow
-        clearable
-        label="Descripción"
-        lazy-rules
-      />
       <!-- VOCALS -->
-      <template v-if="update">
+      <template v-if="update && formObj.commission">
         <q-card
           v-for="(vocal, i) in formObj.vocals"
           :key="i"
@@ -209,6 +142,68 @@
           @click="formObj.vocals.push({})"
         />
       </template>
+      <!-- STATUS -->
+      <!-- <q-select
+        v-if="formObj.id"
+        readonly
+        borderless
+        :disable="
+          auth.loggedUserUi.role != roles.dec &&
+          auth.isSuistrator
+        "
+        v-model="formObj.status"
+        :dense="state.dense"
+        :options="['Pendiente', 'Activa', 'Cerrada', 'Archivada']"
+        :rules="[val || 'Por favor, seleccione un estado']"
+        label="Estado"
+        lazy-rules
+      /> -->
+
+      <!--TODO @filter="filterFn" use-input -->
+      <!-- INFRACTORES -->
+      <q-select
+        :readonly="update"
+        :filled="!update"
+        :borderless="update"
+        v-model="formObj.infractors"
+        multiple
+        :dense="state.dense"
+        :options="userStore.students"
+        :rules="[val || 'Por favor, seleccione los infractores']"
+        label="Infractores"
+        use-chips
+        lazy-rules
+        map-options
+        option-label="name"
+        emit-value
+        option-value="id"
+        behavior="dialog"
+      />
+      <!-- Asunto denuncia -->
+      <q-input
+        :readonly="update"
+        v-model.trim="formObj.subject"
+        :dense="state.dense"
+        :rules="[
+          (val) => (val && val.length > 0) || 'Este campo no puede estar vacío',
+        ]"
+        clearable
+        label="Asunto"
+        lazy-rules
+      />
+      <!-- Descripción denuncia -->
+      <q-input
+        :readonly="update"
+        v-model.trim="formObj.description"
+        :dense="state.dense"
+        :rules="[
+          (val) => (val && val.length > 0) || 'Este campo no puede estar vacío',
+        ]"
+        autogrow
+        clearable
+        label="Descripción"
+        lazy-rules
+      />
 
       <DevInfo>
         {{ formObj }}

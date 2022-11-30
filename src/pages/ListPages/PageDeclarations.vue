@@ -54,6 +54,7 @@
         />
         <!-- Descripción declaración -->
         <q-input
+          :readonly="!isDeclarer && update"
           label="Descripción"
           :v-show="false"
           v-model.trim="formObj.description"
@@ -109,7 +110,7 @@ const showForm = ref(false);
 const formObj = ref({ title: "Declaración del " });
 
 const isDeclarer = computed(
-  () => formObj.value.declarer.id === auth.loggedUser.id
+  () => formObj.value.declarer?.id === auth.loggedUser.id
 );
 const update = computed(() => formObj.value.id !== undefined);
 //openForm triggered on: Nueva entrada, Modificar

@@ -9,12 +9,15 @@
       @close-form="closeForm"
     >
       <div>
-        <div class="text-dark text-caption">Denunciation</div>
+        <div class="text-dark text-caption">Infractor</div>
         {{ formObj.infractor.name }}
       </div>
       <div>
-        <div class="text-dark text-caption">Denunciation</div>
-        {{ formObj.denunciation.description }}
+        <div class="text-dark text-caption">Denuncia</div>
+        <strong>{{ formObj.denunciation.subject }}</strong>
+        <p>
+          {{ formObj.denunciation.description }}
+        </p>
       </div>
       <q-input filled v-model="formObj.fault" label="Falta" autogrow />
 
@@ -183,6 +186,13 @@ const cols = ref([
     required: true,
     label: "Infractor",
     field: (c) => c.infractor.name,
+    sortable: true,
+  },
+  {
+    name: "denunciation",
+    required: true,
+    label: "Denuncia",
+    field: (c) => c.denunciation.subject,
     sortable: true,
   },
   {
