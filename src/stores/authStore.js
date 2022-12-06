@@ -37,7 +37,7 @@ export const useAuthStore = defineStore("auth", () => {
   const isLogged = computed(
     () => loggedUser.value != null && loggedUser.value != undefined
   );
-  const isSu = computed(() => loggedUser.value?.role == roles.su);
+  const isSu = computed(() => loggedUserUi.value?.role == roles.su);
   const isUser = computed(() => loggedUser.value?.position == "Usuario");
   const isTeacher = computed(() => loggedUser.value?.position == "Profesor");
   const isStudent = computed(() => loggedUser.value?.position == "Estudiante");

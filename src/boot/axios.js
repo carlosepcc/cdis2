@@ -10,8 +10,8 @@ import { boot } from "quasar/wrappers";
 const api = axios.create({
   // baseURL: "http://192.168.137.1:8080/",
   // baseURL: "http://10.8.44.245:8080/",
-  // baseURL: "http://localhost:8080/",
-  baseURL: "http://192.168.137.177:8080/",
+  baseURL: "http://localhost:8080/",
+  // baseURL: "http://192.168.137.177:8080/",
 });
 
 export default boot(({ app }) => {

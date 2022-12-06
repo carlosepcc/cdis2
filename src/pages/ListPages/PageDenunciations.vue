@@ -57,9 +57,9 @@
 
       <!-- END DATE -->
       <q-input
-        :borderless="!auth.isDecano && !auth.isSuistrator"
+        :borderless="!auth.isDecano && !auth.isSu"
         readonly
-        :filled="auth.isDecano || auth.isSuistrator"
+        :filled="auth.isDecano || auth.isSu"
         v-if="formObj.commission"
         label="Fin de actuaciones de la comisión"
         v-model="formObj.endDate"
@@ -149,7 +149,7 @@
         borderless
         :disable="
           auth.loggedUserUi.role != roles.dec &&
-          auth.isSuistrator
+          auth.isSu
         "
         v-model="formObj.status"
         :dense="state.dense"

@@ -83,7 +83,7 @@
         </template>
       </q-input>
 
-      <!--        commissions-->
+      <!--commissions-->
       <q-card
         v-for="(c, i) in formObj.commissions"
         :key="i"
@@ -166,6 +166,55 @@
         {{ formObj }}
       </DevInfo>
     </BaseForm>
+    <!-- <BaseForm
+      v-model="showForm"
+      v-show="showForm"
+      formTitle="Apelación"
+      @submit="submitFormData"
+      @reset="resetFormData"
+      @close-form="closeForm"
+      :isModifying="update"
+    >
+      <template v-slot:header>VER APELACIÓN</template>
+      <p class="text-dark">
+        Apelación del infractor Fernando Rodríguez Sarmiento para el caso
+        disciplinario:
+        <q-btn
+          flat
+          label="Tentativa de fraude en examen parcial de Matemática I"
+          class="ull-width"
+          no-caps
+        />
+        <br />
+
+        <q-btn label="Ver caso" class="ull-width" color="primary" no-caps />
+      </p>
+
+      <p class="text-caption">Descripción:</p>
+      <p>
+        Por la presente presento apelación ante la autoridad competente para el
+        caso disciplinario Tentativa de fraude en examen parcial de Matemática
+        I. Se pide que sean tomados en cuenta los atenuantes siguientes: (...)
+      </p>
+      <template v-slot:footer>
+        <q-btn-group spread>
+          <q-btn
+            form="formularioBase"
+            type="reset"
+            label="Denegar apelación"
+            no-caps
+          />
+          <q-btn
+            form="formularioBase"
+            type="submit"
+            :size="state.dense ? 'sm' : 'md'"
+            color="primary"
+            label="Aceptar apelación"
+            no-caps
+          />
+        </q-btn-group>
+      </template>
+    </BaseForm> -->
     <!-- TODO:Print -->
     <ListPage
       @delete-rows="(selectedRows) => s.del(selectedRows)"
@@ -202,7 +251,7 @@ userStore.refresh();
 
 // MODIFICAR (Abrir formulario con datos del objeto a modificar)
 const formObj = ref({});
-
+const apelation = ref({ description: "Descripción" });
 const update = computed(() => formObj.value.id !== undefined);
 //openForm triggered on: Nueva entrada, Modificar
 const d = new Date();
@@ -263,7 +312,7 @@ const resolutionFields = ref([
 ]);
 
 //form dialog model
-const showForm = ref(false);
+const showForm = ref(true);
 //closeForm triggered on: Cancel
 const closeForm = () => {
   showForm.value = false;
